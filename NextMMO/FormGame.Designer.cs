@@ -35,7 +35,7 @@
 			// timerFramerate
 			// 
 			this.timerFramerate.Enabled = true;
-			this.timerFramerate.Interval = 10;
+			this.timerFramerate.Interval = 30;
 			this.timerFramerate.Tick += new System.EventHandler(this.timerFramerate_Tick);
 			// 
 			// FormGame
@@ -50,6 +50,7 @@
 			this.Text = "NextMMO";
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.FormGame_Paint);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormGame_KeyDown);
+			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FormGame_KeyUp);
 			this.ResumeLayout(false);
 
 		}
