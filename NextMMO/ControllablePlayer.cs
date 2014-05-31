@@ -52,6 +52,11 @@ namespace NextMMO
 			this.Translate(0.05f * dx, 0.05f * dy);
 		}
 
+		public void Interact()
+		{
+
+		}
+
 		public MoveDirection Direction { get; set; }
 
 		public new AnimatedSprite Sprite

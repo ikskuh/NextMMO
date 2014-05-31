@@ -75,7 +75,7 @@ namespace NextMMO
 
 			this.player = new ControllablePlayer(this.world, 8, 11);
 			this.player.Sprite = new AnimatedSprite(
-				new AnimatedBitmap(this.bitmaps["Characters/134-Butler01"], 4, 4),
+				new AnimatedBitmap(this.bitmaps["Characters/018-Thief03"], 4, 4),
 				new Point(16, 42));
 			this.world.Entities.Add(this.player);
 		}
