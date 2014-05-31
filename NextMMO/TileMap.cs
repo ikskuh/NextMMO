@@ -10,6 +10,7 @@ namespace NextMMO
 	public sealed class TileMap
 	{
 		public const int LayerCount = 3;
+		public const int TileSize = 32;
 
 		private readonly Tile[,] tiles;
 

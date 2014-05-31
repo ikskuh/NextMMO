@@ -16,8 +16,8 @@ namespace NextMMO
 		ResourceManager<Bitmap> bitmaps;
 		TileMap map;
 		Graphics graphics;
-		AnimatedBitmap character;
 		Bitmap backBuffer;
+		Entity character;
 
 		public FormGame()
 		{
@@ -28,11 +28,6 @@ namespace NextMMO
 			this.backBuffer = new Bitmap(640, 480);
 
 			this.graphics = Graphics.FromImage(this.backBuffer);
-
-			this.character = new AnimatedBitmap(
-				this.bitmaps["Characters/134-Butler01"], 
-				4, 
-				4);
 
 			this.map = new TileMap(20, 15);
 			this.map.RenderTile += map_RenderTile;
@@ -63,19 +58,21 @@ namespace NextMMO
 					}
 				}
 			}
+
+			this.map[8, 11][1] = 10;
+
+			this.character = new Entity(8, 11);
+			this.character.Sprite = new AnimatedSprite(
+				new AnimatedBitmap(this.bitmaps["Characters/134-Butler01"], 4, 4),
+				new Point(16, 42));
 		}
 
 		void map_PostRenderLayer(object sender, RenderLayerEventArgs e)
 		{
-			switch(e.Layer)
+			switch (e.Layer)
 			{
 				case 1:
-					this.character.Draw(
-						this.graphics,
-						32 * 8,
-						32  * 11,
-						0,
-						currentFrame);
+					this.character.Draw(this.graphics);
 					break;
 			}
 		}
@@ -113,6 +110,21 @@ namespace NextMMO
 				this.backBuffer,
 				(this.ClientSize.Width - this.backBuffer.Width) / 2,
 				(this.ClientSize.Height - this.backBuffer.Height) / 2);
+		}
+
+		private void FormGame_KeyDown(object sender, KeyEventArgs e)
+		{
+			System.Diagnostics.Debug.WriteLine(e.KeyCode);
+			switch (e.KeyCode)
+			{
+				default:
+					break;
+			}
+		}
+
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Application.Exit();
 		}
 	}
 }
