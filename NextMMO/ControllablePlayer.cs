@@ -11,7 +11,7 @@ namespace NextMMO
 		public ControllablePlayer(World world, int spawnX, int spawnY)
 			: base(world, spawnX, spawnY)
 		{
-
+			this.Size = 0.5;
 		}
 
 		public override void Update()
@@ -19,21 +19,46 @@ namespace NextMMO
 			int dx = 0;
 			int dy = 0;
 
-			if (this.Direction.HasFlag(MoveDirection.Left))
+			if (this.Direction.HasFlag(MoveDirection.Left) && !this.Direction.HasFlag(MoveDirection.Right))
+			{
+				this.Sprite.Animation = 1;
 				dx -= 1;
-			if (this.Direction.HasFlag(MoveDirection.Right))
+			}
+			if (this.Direction.HasFlag(MoveDirection.Right) && !this.Direction.HasFlag(MoveDirection.Left))
+			{
+				this.Sprite.Animation = 2;
 				dx += 1;
-			if (this.Direction.HasFlag(MoveDirection.Up))
+			}
+			if (this.Direction.HasFlag(MoveDirection.Up) && !this.Direction.HasFlag(MoveDirection.Down))
+			{
+				this.Sprite.Animation = 3;
 				dy -= 1;
-			if (this.Direction.HasFlag(MoveDirection.Down))
+			}
+			if (this.Direction.HasFlag(MoveDirection.Down) && !this.Direction.HasFlag(MoveDirection.Up))
+			{
+				this.Sprite.Animation = 0;
 				dy += 1;
+			}
+
+			if(this.Direction == MoveDirection.None)
+			{
+				this.Sprite.AnimationSpeed = 0;
+			}
+			else
+			{
+				this.Sprite.AnimationSpeed = 8;
+			}
 
 			this.Translate(0.05f * dx, 0.05f * dy);
 		}
 
 		public MoveDirection Direction { get; set; }
 
-		public new AnimatedSprite Sprite { get; set; }
+		public new AnimatedSprite Sprite
+		{
+			get { return base.Sprite as AnimatedSprite; }
+			set { base.Sprite = value; }
+		}
 	}
 
 

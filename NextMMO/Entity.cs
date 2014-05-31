@@ -109,10 +109,11 @@ namespace NextMMO
 				}
 			}
 
-			foreach(var rect in environment)
-			{
-				this.world.Debug(rect, Color.Lime);
-			}
+			// Debug environment
+			//foreach(var rect in environment)
+			//{
+			//	this.world.Debug(rect, Color.Lime);
+			//}
 
 			Func<int, int, bool> testCollision = (_x, _y) =>
 				{
@@ -122,7 +123,8 @@ namespace NextMMO
 						size, 
 						size);
 
-					this.world.Debug(entity, Color.Magenta);
+					// Debug entity collider
+					//this.world.Debug(entity, Color.Magenta);
 
 					foreach(var rect in environment)
 					{
