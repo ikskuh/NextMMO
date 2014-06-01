@@ -78,6 +78,8 @@ namespace NextMMO
 
 		int IGameServices.CurrentFrame { get { return 0; } }
 
+		INetworkService IGameServices.Network { get { return null; } }
+
 		private void panelTileSet_Paint(object sender, PaintEventArgs e)
 		{
 			e.Graphics.DrawImageUnscaled(this.backBuffer, 0, 0);

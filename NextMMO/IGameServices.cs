@@ -13,5 +13,7 @@ namespace NextMMO
 		ResourceManager<Bitmap> Bitmaps { get; }
 
 		int CurrentFrame { get; }
+
+		INetworkService Network { get; }
 	}
 }

@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NextMMO</RootNamespace>
-    <AssemblyName>NextMMO</AssemblyName>
+    <AssemblyName>NextMMO.Client</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,6 +34,9 @@
   <ItemGroup>
     <Reference Include="KeraLua">
       <HintPath>..\packages\NLua.1.3.0.2\lib\net45\x86\KeraLua.dll</HintPath>
+    </Reference>
+    <Reference Include="Lidgren.Network">
+      <HintPath>..\Libraries\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="NLua">
       <HintPath>..\packages\NLua.1.3.0.2\lib\net45\x86\NLua.dll</HintPath>
@@ -69,6 +72,8 @@
       <DependentUpon>FormTileEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="IGameServices.cs" />
+    <Compile Include="INetworkService.cs" />
+    <Compile Include="Networking\MessageDispatcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceManager.cs" />

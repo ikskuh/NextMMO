@@ -112,5 +112,7 @@ namespace NextMMO
 		public double Size { get; set; }
 
 		public Sprite Sprite { get; set; }
+
+		public IGameServices Services { get { return this.world.Services; } }
 	}
 }

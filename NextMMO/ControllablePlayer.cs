@@ -8,6 +8,8 @@ namespace NextMMO
 {
 	public class ControllablePlayer : Entity
 	{
+		int lastX, lastY;
+
 		public ControllablePlayer(World world, int spawnX, int spawnY)
 			: base(world, spawnX, spawnY)
 		{
@@ -50,6 +52,19 @@ namespace NextMMO
 			}
 
 			this.Translate(0.05f * dx, 0.05f * dy);
+
+			int currentX = (int)(32.0 * this.X);
+			int currentY = (int)(32.0 * this.Y);
+			if(this.lastX != currentX || this.lastY != currentY)
+			{
+				var msg = this.Services.Network.CreateMessage(Networking.MessageType.UpdatePlayer);
+				msg.Write((float)this.X);
+				msg.Write((float)this.Y);
+				msg.Write((byte)this.Sprite.Animation);
+				this.Services.Network.Send(msg, Lidgren.Network.NetDeliveryMethod.Unreliable);
+			}
+			this.lastX = currentX;
+			this.lastY = currentY;
 		}
 
 		public void Interact()
