@@ -14,8 +14,10 @@ namespace NextMMO
 	{
 		private readonly Dictionary<string, T> resources = new Dictionary<string,T>();
 		private readonly ResourceLoaderDelegate<T> loader;
+		private readonly ResourceSaverDelegate<T> saver;
 		private readonly string root;
 		private readonly string[] extensions;
+		private readonly string defaultExtension;
 
 		/// <summary>
 		/// Creates a new resource manager.
@@ -23,11 +25,32 @@ namespace NextMMO
 		/// <param name="root">Root directory.</param>
 		/// <param name="loader">Loader delegate to load the resource.</param>
 		/// <param name="extensions">Valid file extensions.</param>
-		public ResourceManager(string root, ResourceLoaderDelegate<T> loader, params string[] extensions)
+		public ResourceManager(string root, ResourceLoaderDelegate<T> loader, ResourceSaverDelegate<T> saver, params string[] extensions)
 		{
 			this.root = root;
 			this.loader = loader;
+			this.saver = saver;
 			this.extensions = extensions;
+			if(this.extensions.Length > 0)
+			{
+				this.defaultExtension = this.extensions[0];
+			}
+			else
+			{
+				throw new ArgumentOutOfRangeException("extensions", "extensions must have at least one entry");
+			}
+		}
+
+		public void Save(string name, T resource)
+		{
+			if (this.saver == null)
+				throw new InvalidOperationException("Saving not supported.");
+
+			var fileName = this.root + "/" + name + this.defaultExtension;
+			using (var stream = File.Open(fileName, FileMode.Create))
+			{
+				this.saver(stream, resource);
+			}
 		}
 
 		/// <summary>
@@ -53,7 +76,7 @@ namespace NextMMO
 							continue;
 						using (var stream = File.Open(fileName, FileMode.Open))
 						{
-							resource = loader(stream);
+							resource = this.loader(stream);
 						}
 						loaded = true;
 						break;

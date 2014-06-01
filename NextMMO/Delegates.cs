@@ -14,4 +14,6 @@ namespace NextMMO
 	/// <param name="stream">Stream that contains the resource.</param>
 	/// <returns>Loaded resource.</returns>
 	public delegate T ResourceLoaderDelegate<T>(Stream stream);
+
+	public delegate void ResourceSaverDelegate<T>(Stream stream, T resource);
 }

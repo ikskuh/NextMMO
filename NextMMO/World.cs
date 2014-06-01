@@ -72,7 +72,7 @@ namespace NextMMO
 
 		void map_RenderTile(object sender, RenderTileEventArgs e)
 		{
-			this.tileSet.DrawTile(e.X, e.Y, e.ID);
+			this.tileSet[e.ID].Draw(e.X, e.Y);
 		}
 
 		#endregion

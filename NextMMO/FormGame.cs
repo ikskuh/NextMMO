@@ -13,7 +13,8 @@ namespace NextMMO
 	public partial class FormGame : Form, IGameServices
 	{
 		int currentFrame = 0;
-		ResourceManager<Bitmap> bitmaps;
+		ResourceManager<Bitmap> bitmapSource;
+		ResourceManager<TileSet> tileSetSource;
 		Graphics graphics;
 		Bitmap backBuffer;
 		ControllablePlayer player;
@@ -24,7 +25,17 @@ namespace NextMMO
 		{
 			InitializeComponent();
 			this.ClientSize = new Size(640, 480);
-			this.bitmaps = new ResourceManager<Bitmap>("./Data/Images/", (stream) => (Bitmap)Image.FromStream(stream, false, true), ".png", ".bmp", ".jpg");
+
+			this.bitmapSource = new ResourceManager<Bitmap>(
+				"./Data/Images/",
+				(stream) => (Bitmap)Image.FromStream(stream, false, true),
+				null,
+				".png", ".bmp", ".jpg");
+			this.tileSetSource = new ResourceManager<TileSet>(
+				"./Data/TileSets/",
+				(stream) => TileSet.Load(this, stream),
+				(stream, resource) => resource.Save(stream),
+				".tset");
 
 			this.backBuffer = new Bitmap(640, 480);
 
@@ -62,20 +73,11 @@ namespace NextMMO
 
 			this.world = new World(this);
 			this.world.TileMap = map;
-			this.world.TileSet = new TileSet(this, 8, 22);
-			this.world.TileSet.Source = this.bitmaps["019-DesertTown01"];
-			this.world.TileSet.TilePassages[1] = TileSide.All;
-			this.world.TileSet.TilePassages[33] = TileSide.Center | TileSide.Bottom | TileSide.Right;
-			this.world.TileSet.TilePassages[34] = TileSide.Center | TileSide.Bottom | TileSide.Right | TileSide.Left;
-			this.world.TileSet.TilePassages[35] = TileSide.Center | TileSide.Bottom | TileSide.Left;
-
-			this.world.TileSet.TilePassages[41] = TileSide.Center | TileSide.Bottom | TileSide.Right | TileSide.Top;
-			this.world.TileSet.TilePassages[42] = TileSide.All;
-			this.world.TileSet.TilePassages[43] = TileSide.Center | TileSide.Bottom | TileSide.Left | TileSide.Top;
+			this.world.TileSet = this.tileSetSource["DesertTown"];
 
 			this.player = new ControllablePlayer(this.world, 8, 11);
 			this.player.Sprite = new AnimatedSprite(
-				new AnimatedBitmap(this.bitmaps["Characters/018-Thief03"], 4, 4),
+				new AnimatedBitmap(this.bitmapSource["Characters/018-Thief03"], 4, 4),
 				new Point(16, 42));
 			this.world.Entities.Add(this.player);
 		}
@@ -145,7 +147,7 @@ namespace NextMMO
 
 		Graphics IGameServices.Graphics { get { return this.graphics; } }
 
-		ResourceManager<Bitmap> IGameServices.Bitmaps { get { return this.bitmaps; } }
+		ResourceManager<Bitmap> IGameServices.Bitmaps { get { return this.bitmapSource; } }
 
 		int IGameServices.CurrentFrame { get { return this.currentFrame; } }
 	}

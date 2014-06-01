@@ -63,57 +63,16 @@ namespace NextMMO
 				{
 					for (int py = Math.Max(0, cy - 1); py < Math.Min(map.Height, cy + 2); py++)
 					{
-						var tile = this.world.TileSet.TilePassages[this.world.TileMap[px, py][layer]];
-						if (!tile.HasFlag(TileSide.Center))
-						{
-							environment.Add(new Rectangle(
-									32 * px,
-									32 * py,
-									32,
-									32));
-							continue; // Skip other sides, this tile is completly blocked
-						}
-						if (!tile.HasFlag(TileSide.Left))
-						{
-							environment.Add(new Rectangle(
-									32 * px,
-									32 * py,
-									2,
-									32));
-						}
-						if (!tile.HasFlag(TileSide.Right))
-						{
-							environment.Add(new Rectangle(
-									32 * px + 30,
-									32 * py,
-									2,
-									32));
-						}
-						if (!tile.HasFlag(TileSide.Top))
-						{
-							environment.Add(new Rectangle(
-									32 * px,
-									32 * py,
-									32,
-									2));
-						}
-						if (!tile.HasFlag(TileSide.Bottom))
-						{
-							environment.Add(new Rectangle(
-									32 * px,
-									32 * py + 30,
-									2,
-									32));
-						}
+						environment.AddRange(this.world.TileSet[this.world.TileMap[px, py][layer]].CreateEnvironment(px, py));
 					}
 				}
 			}
 
 			// Debug environment
-			//foreach(var rect in environment)
-			//{
-			//	this.world.Debug(rect, Color.Lime);
-			//}
+			foreach (var rect in environment)
+			{
+				this.world.Debug(rect, Color.Lime);
+			}
 
 			Func<int, int, bool> testCollision = (_x, _y) =>
 				{
@@ -124,7 +83,7 @@ namespace NextMMO
 						size);
 
 					// Debug entity collider
-					//this.world.Debug(entity, Color.Magenta);
+					this.world.Debug(entity, Color.Magenta);
 
 					foreach(var rect in environment)
 					{

@@ -49,7 +49,7 @@ namespace NextMMO
 						if (this[x, y][layer] <= 0)
 							continue;
 						if (this.RenderTile != null)
-							this.RenderTile(this, new RenderTileEventArgs(x - rect.Left, y - rect.Top, this[x, y][layer] - 1));
+							this.RenderTile(this, new RenderTileEventArgs(x - rect.Left, y - rect.Top, this[x, y][layer]));
 					}
 				}
 				if (this.PostRenderLayer != null)

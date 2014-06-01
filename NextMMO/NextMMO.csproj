@@ -62,6 +62,12 @@
     <Compile Include="FormGame.Designer.cs">
       <DependentUpon>FormGame.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormTileEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormTileEditor.Designer.cs">
+      <DependentUpon>FormTileEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="IGameServices.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -74,12 +80,21 @@
     </Compile>
     <Compile Include="SkinRenderer.cs" />
     <Compile Include="Sprite.cs" />
+    <Compile Include="FormTileSetEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormTileSetEditor.Designer.cs">
+      <DependentUpon>FormTileSetEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="TileMap.cs" />
     <Compile Include="ITileRenderer.cs" />
     <Compile Include="TileSet.cs" />
     <Compile Include="World.cs" />
     <EmbeddedResource Include="FormGame.resx">
       <DependentUpon>FormGame.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormTileEditor.resx">
+      <DependentUpon>FormTileEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -89,7 +104,14 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="FormTileSetEditor.resx">
+      <DependentUpon>FormTileSetEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Data\TileSets\DesertTown.tset">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -142,6 +164,15 @@
     <Content Include="Data\Images\Characters\134-Butler01.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\TileSets\ref.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\RemoveRect_24x24.png" />
+    <None Include="Resources\AddRect_24x24.png" />
+    <None Include="Resources\AddRect_32x32.png" />
+    <None Include="Resources\delete.png" />
+    <None Include="Resources\saveHS.png" />
+    <None Include="Resources\DeleteHS.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
