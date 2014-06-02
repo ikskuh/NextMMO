@@ -9,7 +9,7 @@ namespace NextMMO
 	public class World
 	{
 		private readonly IGameServices services;
-		private readonly HashSet<IEntity> entities = new HashSet<IEntity>();
+		private readonly List<IEntity> entities;
 		private readonly Queue<Action> debugDraws = new Queue<Action>();
 		private TileMap map;
 		private TileSet tileSet;
@@ -17,6 +17,7 @@ namespace NextMMO
 		public World(IGameServices services)
 		{
 			this.services = services;
+			this.entities = new List<IEntity>();
 		}
 
 		public void Update()
@@ -55,6 +56,7 @@ namespace NextMMO
 			switch (e.Layer)
 			{
 				case 1:
+					this.entities.Sort((a, b) => Math.Sign(a.Y - b.Y));
 					foreach(var ent in this.entities)
 					{
 						ent.Draw(this.services.Graphics);

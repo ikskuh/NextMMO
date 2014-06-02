@@ -8,6 +8,7 @@ namespace NextMMO
 {
 	public class ControllablePlayer : Entity
 	{
+		bool isWalking = false;
 		int lastX, lastY;
 
 		public ControllablePlayer(World world, int spawnX, int spawnY)
@@ -51,21 +52,25 @@ namespace NextMMO
 				this.Sprite.AnimationSpeed = 8;
 			}
 
+			bool walking = dx != 0 || dy != 0;
+
 			this.Translate(0.05f * dx, 0.05f * dy);
 
 			int currentX = (int)(32.0 * this.X);
 			int currentY = (int)(32.0 * this.Y);
-			if(this.lastX != currentX || this.lastY != currentY)
+			if(this.lastX != currentX || this.lastY != currentY || this.isWalking != walking)
 			{
 				// Send position update to server.
 				var msg = this.Services.Network.CreateMessage(Networking.MessageType.UpdatePlayerPosition);
 				msg.Write((float)this.X);
 				msg.Write((float)this.Y);
-				msg.Write((byte)this.Sprite.Animation);
+				msg.Write((byte)this.Sprite.Animation, 7);
+				msg.Write(walking);
 				this.Services.Network.Send(msg, Lidgren.Network.NetDeliveryMethod.Unreliable);
 			}
 			this.lastX = currentX;
 			this.lastY = currentY;
+			this.isWalking = walking;
 		}
 
 		public void Interact()

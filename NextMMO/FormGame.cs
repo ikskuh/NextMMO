@@ -109,7 +109,8 @@ namespace NextMMO
 			int playerID = msg.ReadInt32();
 			float x = msg.ReadFloat();
 			float y = msg.ReadFloat();
-			byte rotation = msg.ReadByte();
+			byte rotation = msg.ReadByte(7);
+			bool walking = msg.ReadBoolean();
 
 			ProxyPlayer player;
 			if(!this.proxyPlayers.TryGetValue(playerID, out player))
@@ -123,6 +124,7 @@ namespace NextMMO
 			player.X = x;
 			player.Y = y;
 			player.Direction = rotation;
+			player.Sprite.AnimationSpeed = walking ? 8 : 0;
 		}
 
 		private void timerFramerate_Tick(object sender, EventArgs e)
@@ -138,6 +140,7 @@ namespace NextMMO
 						{
 							case NetConnectionStatus.Connected:
 								this.labelConnecting.Visible = false;
+								this.OnConnection();
 								break;
 							case NetConnectionStatus.Disconnected:
 								this.labelConnecting.Visible = true;
@@ -154,6 +157,12 @@ namespace NextMMO
 			currentFrame++;
 			this.world.Update();
 			this.Invalidate();
+		}
+
+		private void OnConnection()
+		{
+			var msg = ((INetworkService)this).CreateMessage(MessageType.GetUpdate);
+			this.network.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
 		}
 
 		private void FormGame_Paint(object sender, PaintEventArgs e)
@@ -247,5 +256,16 @@ namespace NextMMO
 		}
 
 		#endregion
+
+		private void quitToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Application.Exit();
+		}
+
+		private void newSessionToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			FormGame frmSession = new FormGame();
+			frmSession.Show(this);
+		}
 	}
 }

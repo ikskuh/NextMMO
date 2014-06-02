@@ -19,6 +19,20 @@ namespace NextMMO
 		Sprite Sprite { get; }
 	}
 
+	public class IEntityComparer : IComparer<IEntity>
+	{
+		/// <summary>
+		/// Compares two entities.
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
+		public int Compare(IEntity a, IEntity b)
+		{
+			return Math.Sign(a.Y - b.Y);
+		}
+	}
+
 	public class Entity : IEntity
 	{
 		private readonly World world;
@@ -82,10 +96,10 @@ namespace NextMMO
 			}
 
 			// Debug environment
-			foreach (var rect in environment)
-			{
-				this.world.Debug(rect, Color.Lime);
-			}
+			//foreach (var rect in environment)
+			//{
+			//	this.world.Debug(rect, Color.Lime);
+			//}
 
 			Func<int, int, bool> testCollision = (_x, _y) =>
 				{
@@ -96,7 +110,7 @@ namespace NextMMO
 						size);
 
 					// Debug entity collider
-					this.world.Debug(entity, Color.Magenta);
+					//this.world.Debug(entity, Color.Magenta);
 
 					foreach (var rect in environment)
 					{

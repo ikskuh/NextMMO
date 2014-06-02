@@ -101,14 +101,17 @@ namespace NextMMO.Server
 		public void BroadcastMessage(NetOutgoingMessage msg, NetDeliveryMethod method, IEnumerable<Player> ignorants)
 		{
 			HashSet<Player> ignorantSet = new HashSet<Player>(ignorants);
+			List<NetConnection> receivers = new List<NetConnection>();
 			foreach (var player in this.players.Values)
 			{
 				if (ignorantSet.Contains(player))
 				{
 					continue;
 				}
-				player.Send(msg, method);
+				receivers.Add(player.Connection);
 			}
+			this.host.SendMessage(msg, method, receivers);
+			
 		}
 
 		/// <summary>

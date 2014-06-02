@@ -1,4 +1,5 @@
 ﻿using Lidgren.Network;
+using NextMMO.Networking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,9 +37,28 @@ namespace NextMMO.Server
 			this.Connection.SendMessage(msg, method, 0);
 		}
 
+		public NetOutgoingMessage CreateUpdatePlayerPositionMessage()
+		{
+			var updateMsg = this.host.CreateMessage(MessageType.UpdatePlayerPosition);
+			updateMsg.Write(this.ID);
+			updateMsg.Write(this.X);
+			updateMsg.Write(this.Y);
+			updateMsg.Write(this.Animation, 7);
+			updateMsg.Write(this.IsWalking);
+			return updateMsg;
+		}
+
 		public NetConnection Connection { get { return this.connection; } }
 
 		public int ID { get { return this.id; } }
+
+		public float X { get; set; }
+
+		public float Y { get; set; }
+
+		public byte Animation { get; set; }
+
+		public bool IsWalking { get; set; }
 	}
 
 	public enum PlayerNotification

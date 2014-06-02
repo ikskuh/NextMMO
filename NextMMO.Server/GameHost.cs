@@ -25,25 +25,35 @@ namespace NextMMO.Server
 
 			this.dispatcher = new MessageDispatcher();
 			this.dispatcher[MessageType.UpdatePlayerPosition] = this.UpdatePlayer;
+			this.dispatcher[MessageType.GetUpdate] = this.GetUpdate;
 		}
 
 		private void UpdatePlayer(MessageType type, NetIncomingMessage msg)
 		{
 			var player = this.players[msg.SenderConnection];
 
-			float x = msg.ReadFloat();
-			float y = msg.ReadFloat();
-			byte animation = msg.ReadByte();
+			player.X = msg.ReadFloat();
+			player.Y = msg.ReadFloat();
+			player.Animation = msg.ReadByte(7);
+			player.IsWalking = msg.ReadBoolean();
 
 			int playerID = player.ID;
 
-			var updateMsg = this.CreateMessag(MessageType.UpdatePlayerPosition);
-			updateMsg.Write(playerID);
-			updateMsg.Write(x);
-			updateMsg.Write(y);
-			updateMsg.Write(animation);
+			var updateMsg = player.CreateUpdatePlayerPositionMessage();
 
 			this.players.BroadcastMessage(updateMsg, NetDeliveryMethod.Unreliable, player);
+		}
+
+		private void GetUpdate(MessageType type, NetIncomingMessage msg)
+		{
+			var player = this.players[msg.SenderConnection];
+
+			foreach(var p in this.players)
+			{
+				if (p == player) continue;
+
+				player.Send(p.CreateUpdatePlayerPositionMessage(), NetDeliveryMethod.ReliableUnordered);
+			}
 		}
 
 		public void Start()
@@ -68,11 +78,26 @@ namespace NextMMO.Server
 			}
 		}
 
-		public NetOutgoingMessage CreateMessag(MessageType type)
+		public NetOutgoingMessage CreateMessage(MessageType type)
 		{
 			var msg = this.server.CreateMessage();
 			msg.Write((byte)type);
 			return msg;
+		}
+
+		public void SendMessage(NetOutgoingMessage msg, NetDeliveryMethod method, params NetConnection[] receivers)
+		{
+			this.SendMessage(msg, method, new List<NetConnection>(receivers));
+		}
+
+		public void SendMessage(NetOutgoingMessage msg, NetDeliveryMethod method, List<NetConnection> receivers)
+		{
+			if (receivers.Count == 0) return;
+			this.server.SendMessage(
+				msg,
+				receivers,
+				method,
+				0);
 		}
 	}
 }

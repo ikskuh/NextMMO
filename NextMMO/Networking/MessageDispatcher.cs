@@ -53,6 +53,14 @@ namespace NextMMO.Networking
 	public enum MessageType : byte
 	{
 		None = 0,
+		/// <summary>
+		/// Updates a player position.
+		/// </summary>
 		UpdatePlayerPosition,
+		/// <summary>
+		/// Forces the server to send all available players and data.
+		/// Useful to get a synchronized state.
+		/// </summary>
+		GetUpdate,
 	}
 }
