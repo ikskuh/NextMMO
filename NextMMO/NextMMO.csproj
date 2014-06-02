@@ -73,7 +73,9 @@
     </Compile>
     <Compile Include="IGameServices.cs" />
     <Compile Include="INetworkService.cs" />
+    <Compile Include="Networking\ITransferable.cs" />
     <Compile Include="Networking\MessageDispatcher.cs" />
+    <Compile Include="PlayerData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyPlayer.cs" />
@@ -155,7 +157,22 @@
     <Content Include="Data\Images\020-DesertTown02.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Images\Characters\018-Thief03.png">
+    <Content Include="Data\Images\Characters\Fighter.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Images\Characters\Lancer.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Images\Characters\Thief.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Images\Characters\Cleric.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Images\Characters\Mage.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Images\Characters\Soldier.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\Images\Skins\001-Blue01.png">
@@ -167,7 +184,7 @@
     <Content Include="Data\Images\Sprites\Balloon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Images\Characters\134-Butler01.png">
+    <Content Include="Data\Images\Characters\Butler.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\TileSets\ref.txt">

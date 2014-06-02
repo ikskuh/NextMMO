@@ -18,6 +18,7 @@ namespace NextMMO
 		int currentFrame = 0;
 		ResourceManager<Bitmap> bitmapSource;
 		ResourceManager<TileSet> tileSetSource;
+		ResourceManager<AnimatedBitmap> characterSprites;
 		Graphics graphics;
 		Bitmap backBuffer;
 		ControllablePlayer player;
@@ -28,8 +29,8 @@ namespace NextMMO
 		MessageDispatcher dispatcher;
 
 		Dictionary<int, ProxyPlayer> proxyPlayers;
-
-		AnimatedBitmap foreignPlayer;
+		Font[] fonts;
+		PlayerData playerData;
 
 		public FormGame()
 		{
@@ -46,13 +47,28 @@ namespace NextMMO
 				(stream) => TileSet.Load(this, stream),
 				(stream, resource) => resource.Save(stream),
 				".tset");
+			this.characterSprites = new ResourceManager<AnimatedBitmap>(
+				"./Data/Images/Characters/",
+				(stream) => new AnimatedBitmap(new Bitmap(stream), 4, 4),
+				null,
+				".png", ".bmp", ".jpg");
+
+			this.playerData = new PlayerData();
+			this.playerData.Name = "Unnamed";
+			this.playerData.Sprite = "Fighter";
 
 			this.backBuffer = new Bitmap(640, 480);
+
+			this.fonts = new[]
+				{
+					new Font(FontFamily.GenericSansSerif, 10.0f),
+					new Font(FontFamily.GenericSansSerif, 20.0f),
+					new Font(FontFamily.GenericSansSerif, 40.0f),
+				};
 
 			this.graphics = Graphics.FromImage(this.backBuffer);
 
 			var map = new TileMap(20, 15);
-
 			for (int x = 0; x < map.Width; x++)
 			{
 				for (int y = 0; y < map.Height; y++)
@@ -86,12 +102,8 @@ namespace NextMMO
 			this.world.TileSet = this.tileSetSource["DesertTown"];
 
 			this.player = new ControllablePlayer(this.world, 8, 11);
-			this.player.Sprite = new AnimatedSprite(
-				new AnimatedBitmap(this.bitmapSource["Characters/018-Thief03"], 4, 4),
-				new Point(16, 42));
+			this.player.Sprite = new AnimatedSprite(this.characterSprites[this.playerData.Sprite], new Point(16, 42));
 			this.world.Entities.Add(this.player);
-
-			this.foreignPlayer = new AnimatedBitmap(this.bitmapSource["Characters/134-Butler01"], 4, 4);
 
 			var config = new NetPeerConfiguration("mq32.de.NextMMO");
 			this.network = new NetClient(config);
@@ -102,6 +114,20 @@ namespace NextMMO
 
 			this.dispatcher = new MessageDispatcher();
 			this.dispatcher[MessageType.UpdatePlayerPosition] = this.UpdatePlayerPosition;
+			this.dispatcher[MessageType.UpdatePlayer] = this.UpdatePlayer;
+
+			this.textBoxPlayerName.Text = this.playerData.Name;
+		}
+
+		private void UpdatePlayer(MessageType type, NetIncomingMessage msg)
+		{
+			int playerID = msg.ReadInt32();
+
+			PlayerData data = new PlayerData();
+			data.ReadFrom(msg);
+
+			ProxyPlayer player = GetProxyPlayer(playerID);
+			player.Data = data;
 		}
 
 		private void UpdatePlayerPosition(MessageType type, NetIncomingMessage msg)
@@ -112,19 +138,25 @@ namespace NextMMO
 			byte rotation = msg.ReadByte(7);
 			bool walking = msg.ReadBoolean();
 
-			ProxyPlayer player;
-			if(!this.proxyPlayers.TryGetValue(playerID, out player))
-			{
-				player = new ProxyPlayer();
-				player.Sprite = new AnimatedSprite(this.foreignPlayer, this.player.Sprite.Offset);
-				this.proxyPlayers.Add(playerID, player);
-				this.world.Entities.Add(player);
-			}
+			ProxyPlayer player = GetProxyPlayer(playerID);
 
 			player.X = x;
 			player.Y = y;
 			player.Direction = rotation;
 			player.Sprite.AnimationSpeed = walking ? 8 : 0;
+		}
+
+		private ProxyPlayer GetProxyPlayer(int playerID)
+		{
+			ProxyPlayer player;
+			if (!this.proxyPlayers.TryGetValue(playerID, out player))
+			{
+				player = new ProxyPlayer(this);
+				player.Sprite = new AnimatedSprite(this.characterSprites["Thief"], new Point(16, 42));
+				this.proxyPlayers.Add(playerID, player);
+				this.world.Entities.Add(player);
+			}
+			return player;
 		}
 
 		private void timerFramerate_Tick(object sender, EventArgs e)
@@ -161,7 +193,18 @@ namespace NextMMO
 
 		private void OnConnection()
 		{
-			var msg = ((INetworkService)this).CreateMessage(MessageType.GetUpdate);
+			NetOutgoingMessage msg;
+
+			msg = this.CreateMessage(MessageType.GetUpdate);
+			this.network.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
+
+			UpdatePlayerData();
+		}
+
+		private void UpdatePlayerData()
+		{
+			var msg = this.CreateMessage(MessageType.UpdatePlayer);
+			this.playerData.WriteTo(msg);
 			this.network.SendMessage(msg, NetDeliveryMethod.ReliableUnordered);
 		}
 
@@ -238,6 +281,9 @@ namespace NextMMO
 
 		INetworkService IGameServices.Network { get { return this; } }
 
+		ResourceManager<AnimatedBitmap> IGameServices.Characters { get { return this.characterSprites; } }
+		Font IGameServices.GetFont(FontSize size) { return this.fonts[(int)size]; }
+
 		#endregion
 
 		#region INetworkService
@@ -247,7 +293,7 @@ namespace NextMMO
 			this.network.SendMessage(msg, method);
 		}
 
-		NetOutgoingMessage INetworkService.CreateMessage(MessageType type)
+		public NetOutgoingMessage CreateMessage(MessageType type)
 		{
 			var msg = this.network.CreateMessage();
 			msg.Write((byte)type);
@@ -266,6 +312,21 @@ namespace NextMMO
 		{
 			FormGame frmSession = new FormGame();
 			frmSession.Show(this);
+		}
+
+		private void SetCharacterSprite(object sender, EventArgs e)
+		{
+			ToolStripMenuItem item = sender as ToolStripMenuItem;
+			this.playerData.Sprite = item.Text;
+			this.UpdatePlayerData();
+
+			this.player.Sprite = new AnimatedSprite(this.characterSprites[this.playerData.Sprite], new Point(16, 42));
+		}
+
+		private void SetPlayerName(object sender, EventArgs e)
+		{
+			this.playerData.Name = this.textBoxPlayerName.Text;
+			this.UpdatePlayerData();
 		}
 	}
 }

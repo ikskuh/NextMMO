@@ -13,6 +13,7 @@ namespace NextMMO.Server
 		readonly PlayerCollection players;
 		readonly NetConnection connection;
 		readonly int id;
+		readonly PlayerData data;
 
 		public Player(GameHost host, PlayerCollection players, NetConnection connection, int id)
 		{
@@ -25,6 +26,8 @@ namespace NextMMO.Server
 			this.players = players;
 			this.connection = connection;
 			this.id = id;
+
+			this.data = new PlayerData();
 		}
 
 		public void Notify(PlayerNotification notification)
@@ -59,6 +62,8 @@ namespace NextMMO.Server
 		public byte Animation { get; set; }
 
 		public bool IsWalking { get; set; }
+
+		public PlayerData Data { get { return data; } } 
 	}
 
 	public enum PlayerNotification

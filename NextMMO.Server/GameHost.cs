@@ -24,11 +24,23 @@ namespace NextMMO.Server
 			this.players = new PlayerCollection(this);
 
 			this.dispatcher = new MessageDispatcher();
-			this.dispatcher[MessageType.UpdatePlayerPosition] = this.UpdatePlayer;
+			this.dispatcher[MessageType.UpdatePlayerPosition] = this.UpdatePlayerPosition;
 			this.dispatcher[MessageType.GetUpdate] = this.GetUpdate;
+			this.dispatcher[MessageType.UpdatePlayer] = this.UpdatePlayer;
 		}
 
 		private void UpdatePlayer(MessageType type, NetIncomingMessage msg)
+		{
+			var player = this.players[msg.SenderConnection];
+			player.Data.ReadFrom(msg);
+
+			var response = this.CreateMessage(MessageType.UpdatePlayer);
+			response.Write(player.ID);
+			player.Data.WriteTo(response);
+			this.players.BroadcastMessage(response, NetDeliveryMethod.ReliableUnordered, player);
+		}
+
+		private void UpdatePlayerPosition(MessageType type, NetIncomingMessage msg)
 		{
 			var player = this.players[msg.SenderConnection];
 
@@ -48,10 +60,17 @@ namespace NextMMO.Server
 		{
 			var player = this.players[msg.SenderConnection];
 
-			foreach(var p in this.players)
+			foreach (var p in this.players)
 			{
 				if (p == player) continue;
+				
+				// Update player information
+				var response = this.CreateMessage(MessageType.UpdatePlayer);
+				response.Write(p.ID);
+				p.Data.WriteTo(response);
+				player.Send(response, NetDeliveryMethod.ReliableUnordered);
 
+				// Update player data
 				player.Send(p.CreateUpdatePlayerPositionMessage(), NetDeliveryMethod.ReliableUnordered);
 			}
 		}
@@ -62,9 +81,9 @@ namespace NextMMO.Server
 			while (this.server.Status != NetPeerStatus.NotRunning)
 			{
 				NetIncomingMessage msg;
-				while((msg = this.server.ReadMessage()) != null)
+				while ((msg = this.server.ReadMessage()) != null)
 				{
-					switch(msg.MessageType)
+					switch (msg.MessageType)
 					{
 						case NetIncomingMessageType.Data:
 							this.dispatcher.Dispatch(msg);

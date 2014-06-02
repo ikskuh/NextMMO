@@ -62,5 +62,9 @@ namespace NextMMO.Networking
 		/// Useful to get a synchronized state.
 		/// </summary>
 		GetUpdate,
+		/// <summary>
+		/// Updates the PlayerData of a player.
+		/// </summary>
+		UpdatePlayer,
 	}
 }

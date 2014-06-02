@@ -12,8 +12,14 @@ namespace NextMMO
 
 		ResourceManager<Bitmap> Bitmaps { get; }
 
+		ResourceManager<AnimatedBitmap> Characters { get; }
+
+		Font GetFont(FontSize size);
+
 		int CurrentFrame { get; }
 
 		INetworkService Network { get; }
 	}
+
+	public enum FontSize { Small, Medium, Large };
 }

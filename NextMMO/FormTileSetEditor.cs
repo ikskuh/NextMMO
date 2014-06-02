@@ -148,5 +148,17 @@ namespace NextMMO
 					MessageBoxIcon.Warning);
 			}
 		}
+
+
+		ResourceManager<AnimatedBitmap> IGameServices.Characters
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+
+		Font IGameServices.GetFont(FontSize size)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
