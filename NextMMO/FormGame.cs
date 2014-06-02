@@ -27,6 +27,10 @@ namespace NextMMO
 		NetClient network;
 		MessageDispatcher dispatcher;
 
+		Dictionary<int, ProxyPlayer> proxyPlayers;
+
+		AnimatedBitmap foreignPlayer;
+
 		public FormGame()
 		{
 			InitializeComponent();
@@ -87,12 +91,38 @@ namespace NextMMO
 				new Point(16, 42));
 			this.world.Entities.Add(this.player);
 
+			this.foreignPlayer = new AnimatedBitmap(this.bitmapSource["Characters/134-Butler01"], 4, 4);
+
 			var config = new NetPeerConfiguration("mq32.de.NextMMO");
 			this.network = new NetClient(config);
 			this.network.Start();
 			this.network.Connect("localhost", 26000);
 
+			this.proxyPlayers = new Dictionary<int, ProxyPlayer>();
+
 			this.dispatcher = new MessageDispatcher();
+			this.dispatcher[MessageType.UpdatePlayerPosition] = this.UpdatePlayerPosition;
+		}
+
+		private void UpdatePlayerPosition(MessageType type, NetIncomingMessage msg)
+		{
+			int playerID = msg.ReadInt32();
+			float x = msg.ReadFloat();
+			float y = msg.ReadFloat();
+			byte rotation = msg.ReadByte();
+
+			ProxyPlayer player;
+			if(!this.proxyPlayers.TryGetValue(playerID, out player))
+			{
+				player = new ProxyPlayer();
+				player.Sprite = new AnimatedSprite(this.foreignPlayer, this.player.Sprite.Offset);
+				this.proxyPlayers.Add(playerID, player);
+				this.world.Entities.Add(player);
+			}
+
+			player.X = x;
+			player.Y = y;
+			player.Direction = rotation;
 		}
 
 		private void timerFramerate_Tick(object sender, EventArgs e)

@@ -53,6 +53,6 @@ namespace NextMMO.Networking
 	public enum MessageType : byte
 	{
 		None = 0,
-		UpdatePlayer,
+		UpdatePlayerPosition,
 	}
 }

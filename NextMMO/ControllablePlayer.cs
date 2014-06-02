@@ -57,7 +57,8 @@ namespace NextMMO
 			int currentY = (int)(32.0 * this.Y);
 			if(this.lastX != currentX || this.lastY != currentY)
 			{
-				var msg = this.Services.Network.CreateMessage(Networking.MessageType.UpdatePlayer);
+				// Send position update to server.
+				var msg = this.Services.Network.CreateMessage(Networking.MessageType.UpdatePlayerPosition);
 				msg.Write((float)this.X);
 				msg.Write((float)this.Y);
 				msg.Write((byte)this.Sprite.Animation);

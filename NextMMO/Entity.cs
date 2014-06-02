@@ -6,7 +6,20 @@ using System.Text;
 
 namespace NextMMO
 {
-	public class Entity
+	public interface IEntity
+	{
+		void Update();
+
+		void Draw(Graphics graphics);
+
+		double X { get; }
+
+		double Y { get; }
+
+		Sprite Sprite { get; }
+	}
+
+	public class Entity : IEntity
 	{
 		private readonly World world;
 		private float x;
@@ -54,7 +67,7 @@ namespace NextMMO
 			environment.Add(new Rectangle(32 * this.world.TileMap.Width - 2, 0, 2, 32 * this.world.TileMap.Height));
 
 			environment.Add(new Rectangle(0, 0, 32 * this.world.TileMap.Width, 2));
-			environment.Add(new Rectangle(0, 32 * this.world.TileMap.Height- 2, 32 * this.world.TileMap.Width, 2));
+			environment.Add(new Rectangle(0, 32 * this.world.TileMap.Height - 2, 32 * this.world.TileMap.Width, 2));
 
 			// Add "dynamic" environment (contains tile information around the player)
 			for (int layer = 0; layer < 2; layer++) // Use only the lower two layers
@@ -79,13 +92,13 @@ namespace NextMMO
 					Rectangle entity = new Rectangle(
 						_x - size / 2,
 						_y - size / 2,
-						size, 
+						size,
 						size);
 
 					// Debug entity collider
 					this.world.Debug(entity, Color.Magenta);
 
-					foreach(var rect in environment)
+					foreach (var rect in environment)
 					{
 						if (rect.IntersectsWith(entity))
 							return true; // Cancel translation, we will intersect with a wall
@@ -96,9 +109,9 @@ namespace NextMMO
 			var newX = this.x + deltaX;
 			var newY = this.y + deltaY;
 
-			if(testCollision((int)(32 * newX + 16), (int)(32 * this.y + 16)))
+			if (testCollision((int)(32 * newX + 16), (int)(32 * this.y + 16)))
 				deltaX = 0; // Elimitate x movement
-			if(testCollision((int)(32 * this.X + 16), (int)(32 * newY + 16)))
+			if (testCollision((int)(32 * this.X + 16), (int)(32 * newY + 16)))
 				deltaY = 0; // Elimitate x movement
 
 			this.x += deltaX;

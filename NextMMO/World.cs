@@ -9,7 +9,7 @@ namespace NextMMO
 	public class World
 	{
 		private readonly IGameServices services;
-		private readonly HashSet<Entity> entities = new HashSet<Entity>();
+		private readonly HashSet<IEntity> entities = new HashSet<IEntity>();
 		private readonly Queue<Action> debugDraws = new Queue<Action>();
 		private TileMap map;
 		private TileSet tileSet;
@@ -77,7 +77,7 @@ namespace NextMMO
 
 		#endregion
 
-		public ICollection<Entity> Entities { get { return this.entities; } }
+		public ICollection<IEntity> Entities { get { return this.entities; } }
 
 		public TileMap TileMap
 		{
