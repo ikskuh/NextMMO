@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
-namespace NextMMO
+namespace NextMMO.Editor
 {
 	static class Program
 	{
@@ -13,10 +14,9 @@ namespace NextMMO
 		[STAThread]
 		static void Main()
 		{
-			using(var game = new Game())
-			{
-				game.Run(60, 60);
-			}
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+			Application.Run(new FormTileSetEditor());
 		}
 	}
 }
