@@ -53,18 +53,26 @@ namespace NextMMO.Networking
 	public enum MessageType : byte
 	{
 		None = 0,
+
 		/// <summary>
 		/// Updates a player position.
 		/// </summary>
 		UpdatePlayerPosition,
+
 		/// <summary>
 		/// Forces the server to send all available players and data.
 		/// Useful to get a synchronized state.
 		/// </summary>
 		GetUpdate,
+
 		/// <summary>
 		/// Updates the PlayerData of a player.
 		/// </summary>
 		UpdatePlayer,
+
+		/// <summary>
+		/// Destroys a player. Happens when the player disconnects.
+		/// </summary>
+		DestroyPlayer,
 	}
 }

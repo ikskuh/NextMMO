@@ -63,7 +63,7 @@ namespace NextMMO.Server
 			foreach (var p in this.players)
 			{
 				if (p == player) continue;
-				
+
 				// Update player information
 				var response = this.CreateMessage(MessageType.UpdatePlayer);
 				response.Write(p.ID);
@@ -85,6 +85,24 @@ namespace NextMMO.Server
 				{
 					switch (msg.MessageType)
 					{
+						case NetIncomingMessageType.StatusChanged:
+							NetConnectionStatus status = (NetConnectionStatus)msg.ReadByte();
+							var player = this.players[msg.SenderConnection];
+
+							Console.WriteLine("Status changed for Player {0}: {1}", player.ID, status);
+
+							switch (status)
+							{
+								case NetConnectionStatus.Connected:
+									player.Notify(PlayerNotification.Connected);
+									break;
+								case NetConnectionStatus.Disconnected:
+									player.Notify(PlayerNotification.Disconnected);
+									this.players[msg.SenderConnection] = null;
+									break;
+							}
+
+							break;
 						case NetIncomingMessageType.Data:
 							this.dispatcher.Dispatch(msg);
 							break;

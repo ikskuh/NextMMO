@@ -115,6 +115,7 @@ namespace NextMMO
 			this.dispatcher = new MessageDispatcher();
 			this.dispatcher[MessageType.UpdatePlayerPosition] = this.UpdatePlayerPosition;
 			this.dispatcher[MessageType.UpdatePlayer] = this.UpdatePlayer;
+			this.dispatcher[MessageType.DestroyPlayer] = this.DestroyPlayer;
 
 			this.textBoxPlayerName.Text = this.playerData.Name;
 		}
@@ -128,6 +129,16 @@ namespace NextMMO
 
 			ProxyPlayer player = GetProxyPlayer(playerID);
 			player.Data = data;
+		}
+		private void DestroyPlayer(MessageType type, NetIncomingMessage msg)
+		{
+			int playerID = msg.ReadInt32();
+
+			if (this.proxyPlayers.ContainsKey(playerID))
+			{
+				this.world.Entities.Remove(this.proxyPlayers[playerID]);
+				this.proxyPlayers.Remove(playerID);
+			}
 		}
 
 		private void UpdatePlayerPosition(MessageType type, NetIncomingMessage msg)

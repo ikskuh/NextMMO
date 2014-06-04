@@ -32,7 +32,16 @@ namespace NextMMO.Server
 
 		public void Notify(PlayerNotification notification)
 		{
-			
+			NetOutgoingMessage msg;
+			switch(notification)
+			{
+				case PlayerNotification.Disconnected:
+					// Send destroy message.
+					msg = this.host.CreateMessage(MessageType.DestroyPlayer);
+					msg.Write(this.ID);
+					this.players.BroadcastMessage(msg, NetDeliveryMethod.ReliableUnordered, this);
+					break;
+			}
 		}
 
 		public void Send(NetOutgoingMessage msg, NetDeliveryMethod method)
@@ -70,5 +79,7 @@ namespace NextMMO.Server
 	{
 		None,
 		Reset,
+		Connected,
+		Disconnected,
 	}
 }
