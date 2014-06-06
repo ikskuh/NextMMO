@@ -11,6 +11,8 @@ namespace NextMMO.Gui
 	{
 		readonly List<Element> elements = new List<Element>();
 
+		public event EventHandler Cancelled;
+
 		public Container(IGameServices services)
 			: base(services)
 		{
@@ -19,30 +21,41 @@ namespace NextMMO.Gui
 
 		public void Draw()
 		{
+			Rectangle rect = this.Area;
+
+			if (this.HorizontalSizeMode == AutoSizeMode.AutoSize)
+			{
+				rect.Width = this.GetAutoWidth(this.Services.Graphics);
+			}
+			if (this.VerticalSizeMode == AutoSizeMode.AutoSize)
+			{
+				rect.Height = this.GetAutoHeight(this.Services.Graphics);
+			}
+
 			var state = this.Services.Graphics.Save();
 
 			if (this.Background != null)
 			{
 				this.Background.Draw(
 					this.Services.Graphics,
-					this.Area);
+					rect);
 			}
 			if (this.Border != null)
 			{
 				this.Border.Draw(
 					this.Services.Graphics,
-					this.Area);
+					rect);
 			}
 
-			this.Services.Graphics.IntersectClip(this.Area);
-			this.OnDraw(this.Services.Graphics);
+			this.Services.Graphics.IntersectClip(rect);
+			this.OnDraw(this.Services.Graphics, rect);
 
 			this.Services.Graphics.Restore(state);
 		}
 
 		public void Interact(GuiInteraction interaction)
 		{
-			switch(interaction)
+			switch (interaction)
 			{
 				case GuiInteraction.Action:
 					var e = this.SelectedElement;
@@ -53,8 +66,11 @@ namespace NextMMO.Gui
 					}
 					break;
 				case GuiInteraction.Escape:
-					this.Services.Sounds["Gui/MenuEscape"].Play();
-					// TODO: Implement "escape" behaviour
+					if(this.Cancelled != null)
+					{
+						this.Services.Sounds["Gui/MenuEscape"].Play();
+						this.Cancelled(this, EventArgs.Empty);
+					}
 					break;
 				default:
 					this.OnInteract(interaction);
@@ -62,9 +78,13 @@ namespace NextMMO.Gui
 			}
 		}
 
-		protected abstract void OnDraw(Graphics g);
+		protected abstract void OnDraw(Graphics g, Rectangle rect);
 
 		protected abstract void OnInteract(GuiInteraction interaction);
+
+		protected virtual int GetAutoWidth(Graphics g) { return this.Area.Width; }
+
+		protected virtual int GetAutoHeight(Graphics g) { return this.Area.Height; }
 
 		public Rectangle Area { get; set; }
 
@@ -78,7 +98,13 @@ namespace NextMMO.Gui
 		public Skin Border { get; set; }
 
 		public abstract Element SelectedElement { get; }
+
+		public AutoSizeMode HorizontalSizeMode { get; set; }
+
+		public AutoSizeMode VerticalSizeMode { get; set; }
 	}
+
+	public enum AutoSizeMode { Default, AutoSize }
 
 	public class ListContainer : Container
 	{
@@ -90,26 +116,26 @@ namespace NextMMO.Gui
 			this.BorderWidth = 16;
 		}
 
-		protected override void OnDraw(Graphics g)
+		protected override void OnDraw(Graphics g, Rectangle rect)
 		{
 			var state = this.Services.Graphics.Save();
 
 			this.Services.Graphics.IntersectClip(new Rectangle(
-				this.Area.Left + this.BorderWidth,
-				this.Area.Top + this.BorderWidth,
-				this.Area.Width - 2 * this.BorderWidth,
-				this.Area.Height - 2 * this.BorderWidth));
+				rect.Left + this.BorderWidth,
+				rect.Top + this.BorderWidth,
+				rect.Width - 2 * this.BorderWidth,
+				rect.Height - 2 * this.BorderWidth));
 
 			int id = 0;
 			foreach (var element in this.Elements)
 			{
 				Rectangle eRect = new Rectangle(
-					this.Area.Left + this.BorderWidth,
-					this.Area.Top + this.BorderWidth + 32 * id,
-					this.Area.Width - 2 * this.BorderWidth,
+					rect.Left + this.BorderWidth,
+					rect.Top + this.BorderWidth + 32 * id,
+					rect.Width - 2 * this.BorderWidth,
 					24);
 
-				if (eRect.Top > this.Area.Bottom)
+				if (eRect.Top > rect.Bottom)
 					break;
 
 				if (id == this.selectedID)
@@ -134,9 +160,24 @@ namespace NextMMO.Gui
 			this.Services.Graphics.Restore(state);
 		}
 
+		protected override int GetAutoWidth(Graphics g)
+		{
+			int maxWidth = 0;
+			foreach (var element in this.Elements)
+			{
+				maxWidth = Math.Max(maxWidth, (int)(g.MeasureString(element.Text, this.Services.GetFont(FontSize.Medium)).Width + 2));
+			}
+			return 3 * this.BorderWidth + maxWidth;
+		}
+
+		protected override int GetAutoHeight(Graphics g)
+		{
+			return 2 * this.BorderWidth + 24 * this.Elements.Count + 8 * (this.Elements.Count - 1);
+		}
+
 		protected override void OnInteract(GuiInteraction interaction)
 		{
-			switch(interaction)
+			switch (interaction)
 			{
 				case GuiInteraction.NavigateUp:
 					if (this.selectedID > 0)
