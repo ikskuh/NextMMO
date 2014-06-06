@@ -36,6 +36,11 @@ namespace NextMMO
 
 		ListContainer testContainer;
 
+		EffectManager effects;
+		Random random = new Random();
+
+		GameTime time = new GameTime();
+
 		public Game()
 			: base(
 			640, 480,
@@ -147,6 +152,8 @@ namespace NextMMO
 			this.testContainer.Elements.Add(new Element() { Text = "Entry 3" });
 			this.testContainer.Elements.Add(new Element() { Text = "Entry 4" });
 			this.testContainer.Elements.Add(new Element() { Text = "Entry 5" });
+
+			this.effects = new EffectManager(this);
 		}
 
 		void Keyboard_KeyDown(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
@@ -171,6 +178,18 @@ namespace NextMMO
 					break;
 				case Key.PageDown:
 					this.testContainer.Interact(GuiInteraction.NavigateDown);
+					break;
+				case Key.Space:
+					Effect effect = new Effect()
+					{
+						Position = new PointF(
+							(float)random.NextDouble() * 640.0f,
+							(float)random.NextDouble() * 480.0f),
+						Speed = 8.0f,
+						Animation = 0,
+						Sprite = new AnimatedBitmap(this.bitmapSource["Effects/Support03"], 5, 1)
+					};
+					this.effects.Spawn(effect);
 					break;
 				default:
 					break;
@@ -201,6 +220,7 @@ namespace NextMMO
 
 		protected override void OnUpdateFrame(FrameEventArgs e)
 		{
+			this.time.Advance(e.Time);
 			NetIncomingMessage msg;
 			while ((msg = this.network.ReadMessage()) != null)
 			{
@@ -223,8 +243,9 @@ namespace NextMMO
 						break;
 				}
 			}
-			currentFrame++;
+
 			this.world.Update();
+			this.effects.Update();
 		}
 
 		protected override void OnRenderFrame(FrameEventArgs e)
@@ -234,7 +255,8 @@ namespace NextMMO
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
 			this.world.Draw();
-			this.testContainer.Draw();
+			this.effects.Draw();
+			//this.testContainer.Draw();
 
 			// Prepare for OpenGL
 			this.backBuffer.RotateFlip(RotateFlipType.RotateNoneFlipY);
@@ -346,6 +368,9 @@ namespace NextMMO
 
 		ResourceManager<AnimatedBitmap> IGameServices.Characters { get { return this.characterSprites; } }
 		Font IGameServices.GetFont(FontSize size) { return this.fonts[(int)size]; }
+		Random IGameServices.Random { get { return this.random; } }
+
+		GameTime IGameServices.Time { get { return this.time; } }
 
 		#endregion
 
@@ -365,5 +390,7 @@ namespace NextMMO
 		}
 
 		#endregion
+
+
 	}
 }

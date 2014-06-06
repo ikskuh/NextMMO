@@ -19,6 +19,36 @@ namespace NextMMO
 		int CurrentFrame { get; }
 
 		INetworkService Network { get; }
+
+		Random Random { get; }
+
+		GameTime Time { get; }
+	}
+
+	public class GameTime
+	{
+		private double total, delta;
+
+		public GameTime()
+		{
+
+		}
+
+		public void Advance(double delta)
+		{
+			this.total += delta;
+			this.delta = delta;
+		}
+
+		public double Delta
+		{
+			get { return delta; }
+		}
+
+		public double Total
+		{
+			get { return total; }
+		}
 	}
 
 	public enum FontSize { Small, Medium, Large };

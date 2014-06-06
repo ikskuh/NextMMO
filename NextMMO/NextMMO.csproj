@@ -55,6 +55,7 @@
     <Compile Include="AnimationSource.cs" />
     <Compile Include="ControllablePlayer.cs" />
     <Compile Include="Delegates.cs" />
+    <Compile Include="EffectManager.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameObject.cs" />
@@ -146,6 +147,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\Images\Characters\Soldier.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Images\Effects\Support03.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\Images\Skins\Blue.png">

@@ -160,5 +160,17 @@ namespace NextMMO
 		{
 			throw new NotImplementedException();
 		}
+
+
+		public Random Random
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+
+		public GameTime Time
+		{
+			get { throw new NotImplementedException(); }
+		}
 	}
 }
