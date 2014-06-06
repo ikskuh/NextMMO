@@ -160,7 +160,7 @@ namespace NextMMO
 			this.testContainer.Elements.Add(new Element() { Text = "Entry 2" });
 			this.testContainer.Elements.Add(new Element() { Text = "Entry 3" });
 			this.testContainer.Elements.Add(new Element() { Text = "Entry 4" });
-			this.testContainer.Elements.Add(new Element() { Text = "Entry 5" });
+			this.testContainer.Elements.Add(new Element("Quit Game", (s, ea) => { this.Exit(); }));
 
 			this.testContainer.Cancelled += (s, ea) =>
 				{
@@ -190,25 +190,28 @@ namespace NextMMO
 			switch (e.Key)
 			{
 				case Key.Left:
-					this.player.Direction |= MoveDirection.Left;
+					if(!this.testContainerVisible)
+						this.player.Direction |= MoveDirection.Left;
 					break;
 				case Key.Right:
-					this.player.Direction |= MoveDirection.Right;
+					if (!this.testContainerVisible)
+						this.player.Direction |= MoveDirection.Right;
 					break;
 				case Key.Up:
-					this.player.Direction |= MoveDirection.Up;
+					if (!this.testContainerVisible)
+						this.player.Direction |= MoveDirection.Up;
+					else
+						this.testContainer.Interact(GuiInteraction.NavigateUp);
 					break;
 				case Key.Down:
-					this.player.Direction |= MoveDirection.Down;
-					break;
-				case Key.PageUp:
-					this.testContainer.Interact(GuiInteraction.NavigateUp);
-					break;
-				case Key.PageDown:
-					this.testContainer.Interact(GuiInteraction.NavigateDown);
+					if (!this.testContainerVisible)
+						this.player.Direction |= MoveDirection.Down;
+					else
+						this.testContainer.Interact(GuiInteraction.NavigateDown);
 					break;
 				case Key.Space:
-					this.testContainer.Interact(GuiInteraction.Action);
+					if(this.testContainerVisible)
+						this.testContainer.Interact(GuiInteraction.Action);
 					break;
 				case Key.Escape:
 					if (this.testContainerVisible == false)
