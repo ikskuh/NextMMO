@@ -14,6 +14,8 @@ namespace NextMMO
 
 		ResourceManager<AnimatedBitmap> Characters { get; }
 
+		ResourceManager<Sound> Sounds { get; }
+
 		Font GetFont(FontSize size);
 
 		int CurrentFrame { get; }

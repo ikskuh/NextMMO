@@ -7,11 +7,32 @@ namespace NextMMO.Gui
 {
 	public class Element
 	{
-		public string Text { get; set; }
+		public event EventHandler Activated;
 
-		internal void Trigger()
+		public Element()
+			: this("")
 		{
-			throw new NotImplementedException();
+
 		}
+
+		public Element(string text)
+		{
+			this.Text = text;
+		}
+
+		public Element(string text, EventHandler activated)
+			: this(text)
+		{
+			if (activated != null)
+				this.Activated += activated;
+		}
+
+		public virtual void Trigger()
+		{
+			if (this.Activated != null)
+				this.Activated(this, EventArgs.Empty);
+		}
+
+		public virtual string Text { get; set; }
 	}
 }

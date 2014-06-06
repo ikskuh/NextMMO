@@ -21,6 +21,7 @@ namespace NextMMO
 		ResourceManager<Bitmap> bitmapSource;
 		ResourceManager<TileSet> tileSetSource;
 		ResourceManager<AnimatedBitmap> characterSprites;
+		ResourceManager<Sound> soundSource;
 		Graphics graphics;
 		Bitmap backBuffer;
 		ControllablePlayer player;
@@ -71,6 +72,11 @@ namespace NextMMO
 				(stream) => new AnimatedBitmap(new Bitmap(stream), 4, 4),
 				null,
 				".png", ".bmp", ".jpg");
+			this.soundSource = new ResourceManager<Sound>(
+				"./Data/Sounds/",
+				(stream) => new Sound(stream),
+				null,
+				".ogg");
 
 			this.playerData = new PlayerData();
 			this.playerData.Name = "Unnamed";
@@ -147,13 +153,27 @@ namespace NextMMO
 			this.testContainer.ElementSkin = new SkinnedSkin(baseSkin, new Rectangle(128, 64, 32, 32)) { WrapMode = BorderWrapMode.Stretch };
 			this.testContainer.Area = new Rectangle(16, 16, 256, 384);
 
-			this.testContainer.Elements.Add(new Element() { Text = "Entry 1" });
+			this.testContainer.Elements.Add(new Element("Spawn Effect", (s, ea) => { this.SpawnTestEffect(); }));
 			this.testContainer.Elements.Add(new Element() { Text = "Entry 2" });
 			this.testContainer.Elements.Add(new Element() { Text = "Entry 3" });
 			this.testContainer.Elements.Add(new Element() { Text = "Entry 4" });
 			this.testContainer.Elements.Add(new Element() { Text = "Entry 5" });
 
 			this.effects = new EffectManager(this);
+		}
+
+		private void SpawnTestEffect()
+		{
+			Effect effect = new Effect()
+			{
+				Position = new PointF(
+					(float)random.NextDouble() * 640.0f,
+					(float)random.NextDouble() * 480.0f),
+				Speed = 8.0f,
+				Animation = 0,
+				Sprite = new AnimatedBitmap(this.bitmapSource["Effects/Support03"], 5, 1)
+			};
+			this.effects.Spawn(effect);
 		}
 
 		void Keyboard_KeyDown(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
@@ -180,16 +200,10 @@ namespace NextMMO
 					this.testContainer.Interact(GuiInteraction.NavigateDown);
 					break;
 				case Key.Space:
-					Effect effect = new Effect()
-					{
-						Position = new PointF(
-							(float)random.NextDouble() * 640.0f,
-							(float)random.NextDouble() * 480.0f),
-						Speed = 8.0f,
-						Animation = 0,
-						Sprite = new AnimatedBitmap(this.bitmapSource["Effects/Support03"], 5, 1)
-					};
-					this.effects.Spawn(effect);
+					this.testContainer.Interact(GuiInteraction.Action);
+					break;
+				case Key.E:
+					this.SpawnTestEffect();
 					break;
 				default:
 					break;
@@ -256,7 +270,7 @@ namespace NextMMO
 
 			this.world.Draw();
 			this.effects.Draw();
-			//this.testContainer.Draw();
+			this.testContainer.Draw();
 
 			// Prepare for OpenGL
 			this.backBuffer.RotateFlip(RotateFlipType.RotateNoneFlipY);
@@ -371,6 +385,7 @@ namespace NextMMO
 		Random IGameServices.Random { get { return this.random; } }
 
 		GameTime IGameServices.Time { get { return this.time; } }
+		ResourceManager<Sound> IGameServices.Sounds { get { return this.soundSource; } }
 
 		#endregion
 
@@ -390,6 +405,8 @@ namespace NextMMO
 		}
 
 		#endregion
+
+
 
 
 	}

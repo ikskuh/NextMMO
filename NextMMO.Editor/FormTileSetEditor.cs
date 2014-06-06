@@ -172,5 +172,11 @@ namespace NextMMO
 		{
 			get { throw new NotImplementedException(); }
 		}
+
+
+		public ResourceManager<Sound> Sounds
+		{
+			get { throw new NotImplementedException(); }
+		}
 	}
 }

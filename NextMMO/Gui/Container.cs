@@ -47,9 +47,13 @@ namespace NextMMO.Gui
 				case GuiInteraction.Action:
 					var e = this.SelectedElement;
 					if (e != null)
+					{
+						this.Services.Sounds["Gui/MenuClick"].Play();
 						e.Trigger();
+					}
 					break;
 				case GuiInteraction.Escape:
+					this.Services.Sounds["Gui/MenuEscape"].Play();
 					// TODO: Implement "escape" behaviour
 					break;
 				default:
@@ -136,11 +140,17 @@ namespace NextMMO.Gui
 			{
 				case GuiInteraction.NavigateUp:
 					if (this.selectedID > 0)
+					{
+						this.Services.Sounds["Gui/MenuSelect"].Play();
 						this.selectedID--;
+					}
 					break;
 				case GuiInteraction.NavigateDown:
 					if (this.selectedID < this.Elements.Count - 1)
+					{
+						this.Services.Sounds["Gui/MenuSelect"].Play();
 						this.selectedID++;
+					}
 					break;
 			}
 		}
