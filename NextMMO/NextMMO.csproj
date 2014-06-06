@@ -57,6 +57,9 @@
     <Compile Include="Delegates.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="GameObject.cs" />
+    <Compile Include="Gui\Container.cs" />
+    <Compile Include="Gui\Element.cs" />
     <Compile Include="IGameServices.cs" />
     <Compile Include="INetworkService.cs" />
     <Compile Include="Networking\ITransferable.cs" />
@@ -66,7 +69,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyPlayer.cs" />
     <Compile Include="ResourceManager.cs" />
-    <Compile Include="SkinRenderer.cs" />
+    <Compile Include="Skin.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="TileMap.cs" />
     <Compile Include="ITileRenderer.cs" />
@@ -145,10 +148,10 @@
     <Content Include="Data\Images\Characters\Soldier.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Images\Skins\001-Blue01.png">
+    <Content Include="Data\Images\Skins\Blue.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Images\Skins\001-Fairy01.png">
+    <Content Include="Data\Images\Skins\Fairy.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\Images\Sprites\Balloon.png">

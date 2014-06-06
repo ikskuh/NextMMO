@@ -23,14 +23,14 @@ namespace NextMMO
 			var width = clientSize.Width;
 			var height = clientSize.Height;
 
-			if(this.Skin == null)
+			if (this.Skin == null)
 			{
 				g.Clear(Color.DeepPink);
 			}
 			else
 			{
 				g.Clear(Color.Transparent);
-				SkinRenderer renderer = new SkinRenderer(this.Skin, new Rectangle(128, 64, 32, 32));
+				NextMMO.SkinnedSkin renderer = new NextMMO.SkinnedSkin(this.Skin, new Rectangle(128, 64, 32, 32));
 				renderer.WrapMode = BorderWrapMode.Stretch;
 				renderer.Draw(g, new Rectangle(0, 0, width, height));
 			}

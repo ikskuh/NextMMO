@@ -37,8 +37,8 @@ namespace NextMMO
 					new Rectangle(0, 0, 128, 128),
 					GraphicsUnit.Pixel);
 
-				SkinRenderer renderer = new SkinRenderer(this.Skin, new Rectangle(128, 0, 64, 64));
-				renderer.WrapMode = BorderWrapMode.Tile;
+				NextMMO.SkinnedSkin renderer = new NextMMO.SkinnedSkin(this.Skin, new Rectangle(128, 0, 64, 64));
+				renderer.WrapMode= BorderWrapMode.Tile;
 				renderer.FillCenter = false;
 				renderer.Draw(g, new Rectangle(0, 0, width, height));
 			}

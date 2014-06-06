@@ -7,22 +7,45 @@ using System.Threading.Tasks;
 
 namespace NextMMO
 {
-	public class SkinRenderer
+	public abstract class Skin
 	{
-		public SkinRenderer(Bitmap skin)
-			: this(skin, new Rectangle(0, 0, skin.Width, skin.Height))
+		protected Skin(Bitmap skin)
 		{
-
+			this.Bitmap = skin;
 		}
 
-		public SkinRenderer(Bitmap skin, Rectangle source)
+		public abstract void Draw(Graphics g, Rectangle target);
+
+		public Bitmap Bitmap { get; set; }
+	}
+
+	public class StretchedSkin : Skin
+	{
+		public StretchedSkin(Bitmap skin, Rectangle source)
+			: base(skin)
 		{
-			int x = source.Left;
-			int y = source.Top;
-			int w = source.Width;
-			int h = source.Height;
-			int w4 = source.Width / 4;
-			int h4 = source.Height / 4;
+			this.Source = source;
+		}
+
+		public override void Draw(Graphics g, Rectangle target)
+		{
+			g.DrawImage(this.Bitmap, target, this.Source, GraphicsUnit.Pixel);
+		}
+
+		public Rectangle Source { get; set; }
+	}
+
+	public class SkinnedSkin : Skin
+	{
+		public SkinnedSkin(Bitmap skin, Rectangle area)
+			: base(skin)
+		{
+			int x = area.Left;
+			int y = area.Top;
+			int w = area.Width;
+			int h = area.Height;
+			int w4 = area.Width / 4;
+			int h4 = area.Height / 4;
 
 			this.TopLeft = new Rectangle(x, y, w4, h4);
 			this.TopRight = new Rectangle(x + w - w4, y, w4, h4);
@@ -42,21 +65,19 @@ namespace NextMMO
 				w - 2 * w4,
 				h - 2 * h4);
 
-			this.Skin = skin;
-
 			this.FillCenter = true;
 		}
 
-		public void Draw(Graphics g, Rectangle target)
+		public override void Draw(Graphics g, Rectangle target)
 		{
-			var skin = this.Skin;
+			var skin = this.Bitmap;
 			var mode = this.WrapMode;
 			var x = target.X;
 			var y = target.Y;
 			var width = target.Width;
 			var height = target.Height;
 
-			switch (this.WrapMode)
+			switch (mode)
 			{
 				case BorderWrapMode.Tile:
 					for (int px = 0; px < width - this.TopLeft.Width - this.TopRight.Width; px += this.Top.Width)
@@ -210,14 +231,11 @@ namespace NextMMO
 
 		public Rectangle Left { get; set; }
 
-		public BorderWrapMode WrapMode { get; set; }
-
-		public Bitmap Skin { get; set; }
-
-
 		public bool FillCenter { get; set; }
 
 		public Rectangle Center { get; set; }
+
+		public BorderWrapMode WrapMode { get; set; }
 	}
 
 	public enum BorderWrapMode

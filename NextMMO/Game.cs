@@ -1,4 +1,5 @@
 ﻿using Lidgren.Network;
+using NextMMO.Gui;
 using NextMMO.Networking;
 using OpenTK;
 using OpenTK.Graphics;
@@ -6,7 +7,6 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -34,6 +34,8 @@ namespace NextMMO
 		Font[] fonts;
 		PlayerData playerData;
 
+		ListContainer testContainer;
+
 		public Game()
 			: base(
 			640, 480,
@@ -41,10 +43,10 @@ namespace NextMMO
 			"NextMMO - OpenGL",
 			GameWindowFlags.Default,
 			DisplayDevice.Default,
-			1, 0, 
+			1, 0,
 			GraphicsContextFlags.Debug)
 		{
-			
+
 		}
 
 		protected override void OnLoad(EventArgs e)
@@ -74,8 +76,8 @@ namespace NextMMO
 			this.fonts = new[]
 				{
 					new Font(FontFamily.GenericSansSerif, 10.0f),
-					new Font(FontFamily.GenericSansSerif, 20.0f),
-					new Font(FontFamily.GenericSansSerif, 40.0f),
+					new Font(FontFamily.GenericSansSerif, 16.0f),
+					new Font(FontFamily.GenericSansSerif, 32.0f),
 				};
 
 			this.graphics = Graphics.FromImage(this.backBuffer);
@@ -131,6 +133,20 @@ namespace NextMMO
 
 			this.Keyboard.KeyDown += Keyboard_KeyDown;
 			this.Keyboard.KeyUp += Keyboard_KeyUp;
+
+			var baseSkin = this.bitmapSource["Skins/Blue"];
+
+			this.testContainer = new ListContainer(this);
+			this.testContainer.Background = new StretchedSkin(baseSkin, new Rectangle(0, 0, 128, 128));
+			this.testContainer.Border = new SkinnedSkin(baseSkin, new Rectangle(128, 0, 64, 64)) { FillCenter = false };
+			this.testContainer.ElementSkin = new SkinnedSkin(baseSkin, new Rectangle(128, 64, 32, 32)) { WrapMode = BorderWrapMode.Stretch };
+			this.testContainer.Area = new Rectangle(16, 16, 256, 384);
+
+			this.testContainer.Elements.Add(new Element() { Text = "Entry 1" });
+			this.testContainer.Elements.Add(new Element() { Text = "Entry 2" });
+			this.testContainer.Elements.Add(new Element() { Text = "Entry 3" });
+			this.testContainer.Elements.Add(new Element() { Text = "Entry 4" });
+			this.testContainer.Elements.Add(new Element() { Text = "Entry 5" });
 		}
 
 		void Keyboard_KeyDown(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
@@ -149,6 +165,12 @@ namespace NextMMO
 					break;
 				case Key.Down:
 					this.player.Direction |= MoveDirection.Down;
+					break;
+				case Key.PageUp:
+					this.testContainer.Interact(GuiInteraction.NavigateUp);
+					break;
+				case Key.PageDown:
+					this.testContainer.Interact(GuiInteraction.NavigateDown);
 					break;
 				default:
 					break;
@@ -212,13 +234,14 @@ namespace NextMMO
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
 			this.world.Draw();
+			this.testContainer.Draw();
 
 			// Prepare for OpenGL
 			this.backBuffer.RotateFlip(RotateFlipType.RotateNoneFlipY);
 
-			var lockData =this.backBuffer.LockBits(
-				new Rectangle(0, 0, 640, 480), 
-				System.Drawing.Imaging.ImageLockMode.ReadOnly, 
+			var lockData = this.backBuffer.LockBits(
+				new Rectangle(0, 0, 640, 480),
+				System.Drawing.Imaging.ImageLockMode.ReadOnly,
 				System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
 			// Just copy the image to OpenGL backbuffer.
@@ -303,7 +326,7 @@ namespace NextMMO
 
 		protected override void OnUnload(EventArgs e)
 		{
-			this.network.Disconnect("window-closed"); 
+			this.network.Disconnect("window-closed");
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
