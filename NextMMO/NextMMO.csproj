@@ -72,6 +72,7 @@
     <Compile Include="GDIGraphics.cs" />
     <Compile Include="Gui\Container.cs" />
     <Compile Include="Gui\Element.cs" />
+    <Compile Include="Gui\GuiManager.cs" />
     <Compile Include="IGameServices.cs" />
     <Compile Include="INetworkService.cs" />
     <Compile Include="Networking\ITransferable.cs" />

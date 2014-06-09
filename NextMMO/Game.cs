@@ -35,13 +35,14 @@ namespace NextMMO
 		Font[] fonts;
 		PlayerData playerData;
 
-		bool testContainerVisible = false;
-		ListContainer testContainer;
-
 		EffectManager effects;
 		Random random = new Random();
 
 		GameTime time = new GameTime();
+
+		GuiManager gui;
+		ListContainer ingameMenu;
+		ListContainer debugMenu;
 
 		public Game()
 			: base(
@@ -147,28 +148,39 @@ namespace NextMMO
 			this.Keyboard.KeyDown += Keyboard_KeyDown;
 			this.Keyboard.KeyUp += Keyboard_KeyUp;
 
+			this.effects = new EffectManager(this);
+
+			this.gui = new GuiManager(this);
+
+			this.ingameMenu = this.CreateBaseContainer();
+			this.ingameMenu.Area = new Rectangle(16, 16, 192, 384);
+			this.ingameMenu.HorizontalSizeMode = AutoSizeMode.Default;
+			this.ingameMenu.VerticalSizeMode = AutoSizeMode.AutoSize;
+
+
+			this.ingameMenu.Elements.Add(new Element() { Text = "Character" });
+			this.ingameMenu.Elements.Add(new Element("Debug", (s, ea) => { this.gui.NavigateTo(this.debugMenu); }));
+			this.ingameMenu.Elements.Add(new Element("Quit Game", (s, ea) => { this.Exit(); }));
+
+			this.debugMenu = this.CreateBaseContainer();
+			this.debugMenu.Area = new Rectangle(this.ingameMenu.Area.Right + 16, 16, 192, 256);
+			this.debugMenu.HorizontalSizeMode = AutoSizeMode.Default;
+			this.debugMenu.VerticalSizeMode = AutoSizeMode.AutoSize;
+
+			this.debugMenu.Elements.Add(new Element("Spawn Effect", (s, ea) => { this.SpawnTestEffect(); }));
+			this.debugMenu.Elements.Add(new Element("Back", (s, ea) => { this.gui.NavigateBack(); }));
+		}
+
+		private ListContainer CreateBaseContainer()
+		{
 			var baseSkin = this.bitmapSource["Skins/Blue"];
 
-			this.testContainer = new ListContainer(this);
-			this.testContainer.Background = new StretchedSkin(baseSkin, new Rectangle(0, 0, 128, 128));
-			this.testContainer.Border = new SkinnedSkin(baseSkin, new Rectangle(128, 0, 64, 64)) { FillCenter = false };
-			this.testContainer.ElementSkin = new SkinnedSkin(baseSkin, new Rectangle(128, 64, 32, 32)) { WrapMode = BorderWrapMode.Stretch };
-			this.testContainer.Area = new Rectangle(16, 16, 256, 384);
-			this.testContainer.HorizontalSizeMode = AutoSizeMode.AutoSize;
-			this.testContainer.VerticalSizeMode = AutoSizeMode.AutoSize;
+			var ctrl = new ListContainer(this);
+			ctrl.Background = new StretchedSkin(baseSkin, new Rectangle(0, 0, 128, 128));
+			ctrl.Border = new SkinnedSkin(baseSkin, new Rectangle(128, 0, 64, 64)) { FillCenter = false };
+			ctrl.ElementSkin = new SkinnedSkin(baseSkin, new Rectangle(128, 64, 32, 32)) { WrapMode = BorderWrapMode.Stretch };
 
-			this.testContainer.Elements.Add(new Element("Spawn Effect", (s, ea) => { this.SpawnTestEffect(); }));
-			this.testContainer.Elements.Add(new Element() { Text = "Entry 2" });
-			this.testContainer.Elements.Add(new Element() { Text = "Entry 3" });
-			this.testContainer.Elements.Add(new Element() { Text = "Entry 4" });
-			this.testContainer.Elements.Add(new Element("Quit Game", (s, ea) => { this.Exit(); }));
-
-			this.testContainer.Cancelled += (s, ea) =>
-				{
-					this.testContainerVisible = false;
-				};
-
-			this.effects = new EffectManager(this);
+			return ctrl;
 		}
 
 		private void SpawnTestEffect()
@@ -191,38 +203,40 @@ namespace NextMMO
 			switch (e.Key)
 			{
 				case Key.Left:
-					if(!this.testContainerVisible)
+					if (!this.gui.IsActive)
 						this.player.Direction |= MoveDirection.Left;
 					break;
 				case Key.Right:
-					if (!this.testContainerVisible)
+					if (!this.gui.IsActive)
 						this.player.Direction |= MoveDirection.Right;
 					break;
 				case Key.Up:
-					if (!this.testContainerVisible)
+					if (!this.gui.IsActive)
 						this.player.Direction |= MoveDirection.Up;
 					else
-						this.testContainer.Interact(GuiInteraction.NavigateUp);
+						this.gui.Interact(GuiInteraction.NavigateUp);
 					break;
 				case Key.Down:
-					if (!this.testContainerVisible)
+					if (!this.gui.IsActive)
 						this.player.Direction |= MoveDirection.Down;
 					else
-						this.testContainer.Interact(GuiInteraction.NavigateDown);
+						this.gui.Interact(GuiInteraction.NavigateDown);
 					break;
+				case Key.Enter:
+				case Key.KeypadEnter:
 				case Key.Space:
-					if(this.testContainerVisible)
-						this.testContainer.Interact(GuiInteraction.Action);
+					if (this.gui.IsActive)
+						this.gui.Interact(GuiInteraction.Action);
 					break;
 				case Key.Escape:
-					if (this.testContainerVisible == false)
+					if (this.gui.IsActive)
 					{
-						this.testContainerVisible = true;
-						this.soundSource["Gui/MenuSpawn"].Play();
+						this.gui.Interact(GuiInteraction.Escape);
 					}
 					else
 					{
-						this.testContainer.Interact(GuiInteraction.Escape);
+						this.gui.NavigateTo(this.ingameMenu);
+						//this.soundSource["Gui/MenuSpawn"].Play();
 					}
 					break;
 				case Key.E:
@@ -293,10 +307,7 @@ namespace NextMMO
 
 			this.world.Draw();
 			this.effects.Draw();
-			if (this.testContainerVisible)
-			{
-				this.testContainer.Draw();
-			}
+			this.gui.Draw();
 
 			// Prepare for OpenGL
 			this.backBuffer.RotateFlip(RotateFlipType.RotateNoneFlipY);
