@@ -14,7 +14,7 @@ namespace NextMMO
 			this.Bitmap = skin;
 		}
 
-		public abstract void Draw(Graphics g, Rectangle target);
+		public abstract void Draw(IGraphics g, Rectangle target);
 
 		public Bitmap Bitmap { get; set; }
 	}
@@ -27,9 +27,9 @@ namespace NextMMO
 			this.Source = source;
 		}
 
-		public override void Draw(Graphics g, Rectangle target)
+		public override void Draw(IGraphics g, Rectangle target)
 		{
-			g.DrawImage(this.Bitmap, target, this.Source, GraphicsUnit.Pixel);
+			g.DrawImage(this.Bitmap, target, this.Source);
 		}
 
 		public Rectangle Source { get; set; }
@@ -68,7 +68,7 @@ namespace NextMMO
 			this.FillCenter = true;
 		}
 
-		public override void Draw(Graphics g, Rectangle target)
+		public override void Draw(IGraphics g, Rectangle target)
 		{
 			var skin = this.Bitmap;
 			var mode = this.WrapMode;
@@ -89,8 +89,7 @@ namespace NextMMO
 								y,
 								this.Top.Width,
 								this.Top.Height),
-							this.Top,
-							GraphicsUnit.Pixel);
+							this.Top);
 						// Bottom bar
 						g.DrawImage(
 							skin,
@@ -99,8 +98,7 @@ namespace NextMMO
 								y + height - this.Bottom.Height,
 								this.Bottom.Width,
 								this.Bottom.Height),
-							this.Bottom,
-							GraphicsUnit.Pixel);
+							this.Bottom);
 					}
 					for (int py = 0; py < height - this.TopLeft.Height - this.BottomLeft.Height; py += 32)
 					{
@@ -112,8 +110,7 @@ namespace NextMMO
 								y + this.TopLeft.Height + py,
 								this.Left.Width,
 								this.Left.Height),
-							this.Left,
-							GraphicsUnit.Pixel);
+							this.Left);
 
 						// Right bar
 						g.DrawImage(
@@ -123,8 +120,7 @@ namespace NextMMO
 								y + this.TopRight.Height + py,
 								this.Right.Width,
 								this.Right.Height),
-							this.Right,
-							GraphicsUnit.Pixel);
+							this.Right);
 					}
 					break;
 				case BorderWrapMode.Stretch:
@@ -136,8 +132,7 @@ namespace NextMMO
 							y,
 							width - this.TopLeft.Width - this.TopRight.Width,
 							this.Top.Height),
-						this.Top,
-						GraphicsUnit.Pixel);
+						this.Top);
 					// Bottom bar
 					g.DrawImage(
 						skin,
@@ -146,8 +141,7 @@ namespace NextMMO
 							y + height - this.Bottom.Height,
 							width - this.BottomLeft.Width - this.BottomRight.Width,
 							this.Bottom.Height),
-						this.Bottom,
-						GraphicsUnit.Pixel);
+						this.Bottom);
 
 					// Left bar
 					g.DrawImage(
@@ -157,8 +151,7 @@ namespace NextMMO
 							y + this.TopLeft.Height,
 							this.Left.Width,
 							height - this.TopLeft.Height - this.BottomLeft.Height),
-						this.Left,
-						GraphicsUnit.Pixel);
+						this.Left);
 
 					// Right bar
 					g.DrawImage(
@@ -168,8 +161,7 @@ namespace NextMMO
 							y + this.TopRight.Height,
 							this.Right.Width,
 							height - this.TopRight.Height - this.BottomRight.Height),
-						this.Right,
-						GraphicsUnit.Pixel);
+						this.Right);
 					break;
 			}
 
@@ -177,29 +169,25 @@ namespace NextMMO
 			g.DrawImage(
 				skin,
 				new Rectangle(x, y, this.TopLeft.Width, this.TopLeft.Height),
-				this.TopLeft,
-				GraphicsUnit.Pixel);
+				this.TopLeft);
 
 			// Top right corner
 			g.DrawImage(
 				skin,
 				new Rectangle(x + width - this.TopRight.Width, y, this.TopRight.Width, this.TopRight.Height),
-				this.TopRight,
-				GraphicsUnit.Pixel);
+				this.TopRight);
 
 			// Bottom left corner
 			g.DrawImage(
 				skin,
 				new Rectangle(x, y + height - this.BottomLeft.Height, this.BottomLeft.Width, this.BottomLeft.Height),
-				this.BottomLeft,
-				GraphicsUnit.Pixel);
+				this.BottomLeft);
 
 			// Bottom right corner
 			g.DrawImage(
 				skin,
 				new Rectangle(x + width - this.BottomRight.Width, y + height - this.BottomRight.Height, this.BottomRight.Width, this.BottomRight.Height),
-				this.BottomRight,
-				GraphicsUnit.Pixel);
+				this.BottomRight);
 
 			if (this.FillCenter)
 			{
@@ -210,8 +198,7 @@ namespace NextMMO
 						y + this.Top.Height,
 						width - this.Left.Width - this.Right.Width,
 						height - this.Top.Height - this.Bottom.Height),
-					this.Center,
-					GraphicsUnit.Pixel);
+					this.Center);
 			}
 		}
 

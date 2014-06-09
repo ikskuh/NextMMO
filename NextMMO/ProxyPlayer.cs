@@ -22,7 +22,7 @@ namespace NextMMO
 
 		}
 
-		public void Draw(System.Drawing.Graphics graphics)
+		public void Draw(IGraphics graphics)
 		{
 			int cx = (int)(32 * this.X);
 			int cy = (int)(32 * this.Y);
@@ -35,7 +35,7 @@ namespace NextMMO
 			graphics.DrawString(
 				this.data.Name,
 				font,
-				Brushes.Black,
+				Color.Black,
 				cx - 0.5f * size.Width + TileMap.TileSize / 2,
 				cy - 24 - size.Height);
 		}

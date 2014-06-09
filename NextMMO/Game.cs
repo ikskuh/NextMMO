@@ -17,11 +17,11 @@ namespace NextMMO
 	public partial class Game : GameWindow, IGameServices, INetworkService
 	{
 		bool isConnected = false;
-		int currentFrame = 0;
 		ResourceManager<Bitmap> bitmapSource;
 		ResourceManager<TileSet> tileSetSource;
 		ResourceManager<AnimatedBitmap> characterSprites;
 		ResourceManager<Sound> soundSource;
+		GDIGraphics graphicsWrapper;
 		Graphics graphics;
 		Bitmap backBuffer;
 		ControllablePlayer player;
@@ -93,6 +93,7 @@ namespace NextMMO
 				};
 
 			this.graphics = Graphics.FromImage(this.backBuffer);
+			this.graphicsWrapper = new GDIGraphics(this.graphics);
 
 			var map = new TileMap(20, 15);
 			for (int x = 0; x < map.Width; x++)
@@ -397,7 +398,7 @@ namespace NextMMO
 
 		#region IGameServices
 
-		Graphics IGameServices.Graphics { get { return this.graphics; } }
+		IGraphics IGameServices.Graphics { get { return this.graphicsWrapper; } }
 
 		ResourceManager<Bitmap> IGameServices.Bitmaps { get { return this.bitmapSource; } }
 

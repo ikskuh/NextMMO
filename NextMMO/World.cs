@@ -44,7 +44,7 @@ namespace NextMMO
 			this.debugDraws.Enqueue(() =>
 				{
 					this.Services.Graphics.FillRectangle(
-						new SolidBrush(Color.FromArgb(128, color.R, color.G, color.B)),
+						Color.FromArgb(128, color.R, color.G, color.B),
 						rect);
 				});
 		}

@@ -198,8 +198,7 @@ namespace NextMMO
 			this.tileSet.Services.Graphics.DrawImage(
 				texmap,
 				new Rectangle(32 * x, 32 * y, 32, 32),
-				this.Source,
-				GraphicsUnit.Pixel);
+				this.Source);
 		}
 
 		/// <summary>

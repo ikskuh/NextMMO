@@ -20,7 +20,7 @@ namespace NextMMO
 			this.Offset = offset;
 		}
 
-		protected override void OnDraw(Graphics g, int x, int y)
+		protected override void OnDraw(IGraphics g, int x, int y)
 		{
 			if(this.Bitmap == null) return;
 			this.Bitmap.Draw(

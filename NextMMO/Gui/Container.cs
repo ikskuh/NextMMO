@@ -32,8 +32,6 @@ namespace NextMMO.Gui
 				rect.Height = this.GetAutoHeight(this.Services.Graphics);
 			}
 
-			var state = this.Services.Graphics.Save();
-
 			if (this.Background != null)
 			{
 				this.Background.Draw(
@@ -47,10 +45,10 @@ namespace NextMMO.Gui
 					rect);
 			}
 
-			this.Services.Graphics.IntersectClip(rect);
+			this.Services.Graphics.SetClip(rect);
 			this.OnDraw(this.Services.Graphics, rect);
 
-			this.Services.Graphics.Restore(state);
+			this.Services.Graphics.ResetClip();
 		}
 
 		public void Interact(GuiInteraction interaction)
@@ -78,13 +76,13 @@ namespace NextMMO.Gui
 			}
 		}
 
-		protected abstract void OnDraw(Graphics g, Rectangle rect);
+		protected abstract void OnDraw(IGraphics g, Rectangle rect);
 
 		protected abstract void OnInteract(GuiInteraction interaction);
 
-		protected virtual int GetAutoWidth(Graphics g) { return this.Area.Width; }
+		protected virtual int GetAutoWidth(IGraphics g) { return this.Area.Width; }
 
-		protected virtual int GetAutoHeight(Graphics g) { return this.Area.Height; }
+		protected virtual int GetAutoHeight(IGraphics g) { return this.Area.Height; }
 
 		public Rectangle Area { get; set; }
 
@@ -116,11 +114,9 @@ namespace NextMMO.Gui
 			this.BorderWidth = 16;
 		}
 
-		protected override void OnDraw(Graphics g, Rectangle rect)
+		protected override void OnDraw(IGraphics g, Rectangle rect)
 		{
-			var state = this.Services.Graphics.Save();
-
-			this.Services.Graphics.IntersectClip(new Rectangle(
+			this.Services.Graphics.SetClip(new Rectangle(
 				rect.Left + this.BorderWidth,
 				rect.Top + this.BorderWidth,
 				rect.Width - 2 * this.BorderWidth,
@@ -150,17 +146,16 @@ namespace NextMMO.Gui
 				g.DrawString(
 					element.Text,
 					this.Services.GetFont(FontSize.Medium),
-					Brushes.Black,
+					Color.Black,
 					eRect.X + 0.5f * (eRect.Width - size.Width),
 					eRect.Y + 0.5f * (eRect.Height - size.Height));
 
 				id++;
 			}
 
-			this.Services.Graphics.Restore(state);
 		}
 
-		protected override int GetAutoWidth(Graphics g)
+		protected override int GetAutoWidth(IGraphics g)
 		{
 			int maxWidth = 0;
 			foreach (var element in this.Elements)
@@ -170,7 +165,7 @@ namespace NextMMO.Gui
 			return 3 * this.BorderWidth + maxWidth;
 		}
 
-		protected override int GetAutoHeight(Graphics g)
+		protected override int GetAutoHeight(IGraphics g)
 		{
 			return 2 * this.BorderWidth + 24 * this.Elements.Count + 8 * (this.Elements.Count - 1);
 		}

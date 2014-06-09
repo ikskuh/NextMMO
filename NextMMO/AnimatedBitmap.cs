@@ -16,17 +16,17 @@ namespace NextMMO
 			this.AnimationCount = animations;
 		}
 
-		public void Draw(Graphics g, int x, int y, int animation, int frame)
+		public void Draw(IGraphics g, int x, int y, int animation, int frame)
 		{
 			this.Draw(g, new Rectangle(x, y, this.Width, this.Height), animation, frame);
 		}
 
-		public void Draw(Graphics g, Point p, int animation, int frame)
+		public void Draw(IGraphics g, Point p, int animation, int frame)
 		{
 			this.Draw(g, new Rectangle(p.X, p.Y, this.Width, this.Height), animation, frame);
 		}
 
-		public void Draw(Graphics g, Rectangle rect, int animation, int frame)
+		public void Draw(IGraphics g, Rectangle rect, int animation, int frame)
 		{
 			g.DrawImage(
 				this.Source,
@@ -34,8 +34,7 @@ namespace NextMMO
 				new Rectangle(
 					this.Width * (frame % this.FrameCount),
 					this.Height * (animation % this.AnimationCount),
-					this.Width, this.Height),
-				GraphicsUnit.Pixel);
+					this.Width, this.Height));
 		}
 
 		public Bitmap Source { get; private set; }

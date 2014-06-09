@@ -72,7 +72,7 @@ namespace NextMMO
 			this.textBoxName.Name = "Unnamed";
 		}
 
-		Graphics IGameServices.Graphics { get { return this.graphics; } }
+		IGraphics IGameServices.Graphics { get { return null; } }
 
 		ResourceManager<Bitmap> IGameServices.Bitmaps { get { return this.bitmapSource; } }
 

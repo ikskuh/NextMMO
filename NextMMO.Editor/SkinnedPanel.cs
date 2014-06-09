@@ -40,7 +40,8 @@ namespace NextMMO
 				NextMMO.SkinnedSkin renderer = new NextMMO.SkinnedSkin(this.Skin, new Rectangle(128, 0, 64, 64));
 				renderer.WrapMode= BorderWrapMode.Tile;
 				renderer.FillCenter = false;
-				renderer.Draw(g, new Rectangle(0, 0, width, height));
+				//renderer.Draw(g, new Rectangle(0, 0, width, height));
+				throw new NotImplementedException();
 			}
 			var size = g.MeasureString(this.Text, this.Font);
 			g.DrawString(

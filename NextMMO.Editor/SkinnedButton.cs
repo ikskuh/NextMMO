@@ -32,7 +32,8 @@ namespace NextMMO
 				g.Clear(Color.Transparent);
 				NextMMO.SkinnedSkin renderer = new NextMMO.SkinnedSkin(this.Skin, new Rectangle(128, 64, 32, 32));
 				renderer.WrapMode = BorderWrapMode.Stretch;
-				renderer.Draw(g, new Rectangle(0, 0, width, height));
+				//renderer.Draw(g, new Rectangle(0, 0, width, height));
+				throw new NotImplementedException();
 			}
 			var size = g.MeasureString(this.Text, this.Font);
 			g.DrawString(

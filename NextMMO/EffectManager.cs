@@ -53,7 +53,7 @@ namespace NextMMO
 			}
 		}
 
-		public void Draw(Graphics g)
+		public void Draw(IGraphics g)
 		{
 			this.Sprite.Draw(
 				g,

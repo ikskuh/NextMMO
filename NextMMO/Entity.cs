@@ -10,7 +10,7 @@ namespace NextMMO
 	{
 		void Update();
 
-		void Draw(Graphics graphics);
+		void Draw(IGraphics graphics);
 
 		double X { get; }
 
@@ -57,7 +57,7 @@ namespace NextMMO
 
 		}
 
-		public virtual void Draw(System.Drawing.Graphics graphics)
+		public virtual void Draw(IGraphics graphics)
 		{
 			this.Sprite.Draw(
 				graphics,

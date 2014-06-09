@@ -8,7 +8,7 @@ namespace NextMMO
 {
 	public abstract class Sprite
 	{
-		public void Draw(Graphics graphics, int x, int y)
+		public void Draw(IGraphics graphics, int x, int y)
 		{
 			this.OnDraw(
 				graphics,
@@ -16,7 +16,7 @@ namespace NextMMO
 				y + TileMap.TileSize / 2 - this.Offset.Y);
 		}
 
-		protected abstract void OnDraw(Graphics g, int x, int y);
+		protected abstract void OnDraw(IGraphics g, int x, int y);
 
 		public Point Offset { get; set; }
 	}
