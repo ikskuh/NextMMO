@@ -76,8 +76,6 @@ namespace NextMMO
 
 		ResourceManager<Bitmap> IGameServices.Bitmaps { get { return this.bitmapSource; } }
 
-		int IGameServices.CurrentFrame { get { return 0; } }
-
 		INetworkService IGameServices.Network { get { return null; } }
 
 		private void panelTileSet_Paint(object sender, PaintEventArgs e)

@@ -18,8 +18,6 @@ namespace NextMMO
 
 		Font GetFont(FontSize size);
 
-		int CurrentFrame { get; }
-
 		INetworkService Network { get; }
 
 		Random Random { get; }

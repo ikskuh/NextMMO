@@ -401,15 +401,16 @@ namespace NextMMO
 
 		ResourceManager<Bitmap> IGameServices.Bitmaps { get { return this.bitmapSource; } }
 
-		int IGameServices.CurrentFrame { get { return this.currentFrame; } }
-
 		INetworkService IGameServices.Network { get { return this; } }
 
 		ResourceManager<AnimatedBitmap> IGameServices.Characters { get { return this.characterSprites; } }
+
 		Font IGameServices.GetFont(FontSize size) { return this.fonts[(int)size]; }
+
 		Random IGameServices.Random { get { return this.random; } }
 
 		GameTime IGameServices.Time { get { return this.time; } }
+
 		ResourceManager<Sound> IGameServices.Sounds { get { return this.soundSource; } }
 
 		#endregion
