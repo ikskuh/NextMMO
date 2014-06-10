@@ -11,7 +11,7 @@ namespace NextMMO
 		public AnimatedSprite(AnimatedBitmap bitmap)
 		{
 			this.Bitmap = bitmap;
-			this.AnimationSpeed = 8.0f; // 8 FPS
+			this.Speed = 8.0f; // 8 FPS
 		}
 
 		public AnimatedSprite(AnimatedBitmap bitmap, Point offset)
@@ -28,13 +28,13 @@ namespace NextMMO
 				x,
 				y,
 				this.Animation,
-				(int)(AnimationSource.Time * this.AnimationSpeed));
+				(int)(AnimationSource.Time * this.Speed));
 		}
 
 		public AnimatedBitmap Bitmap { get; set; }
 
 		public int Animation { get; set; }
 
-		public float AnimationSpeed { get; set; }
+		public double Speed { get; set; }
 	}
 }

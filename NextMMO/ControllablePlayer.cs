@@ -46,11 +46,11 @@ namespace NextMMO
 
 			if(this.Direction == MoveDirection.None)
 			{
-				this.Sprite.AnimationSpeed = 0;
+				this.Sprite.Speed = 0;
 			}
 			else
 			{
-				this.Sprite.AnimationSpeed = 8;
+				this.Sprite.Speed = 8;
 			}
 
 			bool walking = dx != 0 || dy != 0;

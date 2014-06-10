@@ -19,6 +19,11 @@ namespace NextMMO
 		ResourceManager<AnimatedBitmap> Characters { get; }
 
 		/// <summary>
+		/// Provides animated bitmaps.
+		/// </summary>
+		ResourceManager<AnimatedBitmap> Animations { get; }
+
+		/// <summary>
 		/// Provides sounds.
 		/// </summary>
 		ResourceManager<Sound> Sounds { get; }

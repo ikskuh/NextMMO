@@ -86,17 +86,22 @@ namespace NextMMO
 			this.world.Focus = this.player;
 			this.world.Entities.Add(this.player);
 
-			var thingy = new ScriptableEntity(this.world);
+			var thingy = this.resources.Templates["Static/Well"].Instantiate(this.world);
 			thingy.Teleport(8, 13);
-			thingy.Sprite = new AnimatedSprite(new AnimatedBitmap(this.resources.Bitmaps["WaterFalls"], 4, 4), new Point(48, 48))
-			{
-				Animation = 2,
-				AnimationSpeed = 8.0f,
-			};
-			thingy.Script = "Game:PlaySound(\"BitchSlap\")";
-			thingy.Colliders.Add(new Rectangle(-48, -8, 96, 56));
 			this.world.Entities.Add(thingy);
 
+			InitializeNetwork();
+
+			this.Keyboard.KeyDown += Keyboard_KeyDown;
+			this.Keyboard.KeyUp += Keyboard_KeyUp;
+
+			this.effects = new EffectManager(this);
+
+			InitializeGui();
+		}
+
+		private void InitializeNetwork()
+		{
 			var config = new NetPeerConfiguration("mq32.de.NextMMO");
 			this.network = new NetClient(config);
 			this.network.Start();
@@ -108,17 +113,15 @@ namespace NextMMO
 			this.dispatcher[MessageType.UpdatePlayerPosition] = this.UpdatePlayerPosition;
 			this.dispatcher[MessageType.UpdatePlayer] = this.UpdatePlayer;
 			this.dispatcher[MessageType.DestroyPlayer] = this.DestroyPlayer;
+		}
 
-			this.Keyboard.KeyDown += Keyboard_KeyDown;
-			this.Keyboard.KeyUp += Keyboard_KeyUp;
-
-			this.effects = new EffectManager(this);
-
+		private void InitializeGui()
+		{
 			this.gui = new GuiManager(this);
 
 			this.ingameMenu = this.CreateBaseContainer();
 			this.ingameMenu.Area = new Rectangle(16, 16, 192, 384);
-			this.ingameMenu.HorizontalSizeMode = AutoSizeMode.AutoSize;
+			this.ingameMenu.HorizontalSizeMode = AutoSizeMode.Default;
 			this.ingameMenu.VerticalSizeMode = AutoSizeMode.AutoSize;
 
 
@@ -416,7 +419,7 @@ namespace NextMMO
 			player.X = x;
 			player.Y = y;
 			player.Direction = rotation;
-			player.Sprite.AnimationSpeed = walking ? 8 : 0;
+			player.Sprite.Speed = walking ? 8 : 0;
 		}
 
 		private ProxyPlayer GetProxyPlayer(int playerID)
