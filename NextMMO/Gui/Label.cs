@@ -15,7 +15,7 @@ namespace NextMMO.Gui
 
 		public override void Draw(IGraphics graphics, Rectangle rect)
 		{
-			var size = graphics.MeasureString(this.Text, graphics.GetFont(FontSize.Medium));
+			var size = graphics.MeasureString(this.Text, graphics.GetFont(FontSize.Medium), false);
 			graphics.DrawString(
 				this.Text,
 				graphics.GetFont(FontSize.Medium),

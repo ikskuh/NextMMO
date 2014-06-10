@@ -40,14 +40,26 @@ namespace NextMMO
 			this.graphics.DrawImage(bitmap, destination, source, GraphicsUnit.Pixel);
 		}
 
-		public SizeF MeasureString(string text, Font font)
+		public SizeF MeasureString(string text, Font font, bool measureWhitespace)
 		{
-			return this.graphics.MeasureString(text, font);
+			StringFormat format = new StringFormat()
+			{
+				FormatFlags = StringFormatFlags.MeasureTrailingSpaces
+			};
+			if(measureWhitespace)
+				return this.graphics.MeasureString(text, font, 10000, format);
+			else
+				return this.graphics.MeasureString(text, font);
 		}
 
 		public void DrawString(string text, Font font, Color color, float x, float y)
 		{
 			this.graphics.DrawString(text, font, new SolidBrush(color), x, y);
+		}
+
+		public void DrawLine(Color color, float x1, float y1, float x2, float y2)
+		{
+			this.graphics.DrawLine(new Pen(color), x1, y1, x2, y2);
 		}
 
 		public void ResetClip()
@@ -64,5 +76,7 @@ namespace NextMMO
 		{
 			return this.fonts[(int)size];
 		}
+
+		public float DPI { get { return this.graphics.DpiY; } }
 	}
 }

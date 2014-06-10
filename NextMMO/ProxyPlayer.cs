@@ -30,7 +30,7 @@ namespace NextMMO
 			this.Sprite.Draw(graphics, cx, cy);
 
 			var font = graphics.GetFont(FontSize.Small);
-			var size = graphics.MeasureString(this.data.Name, font);
+			var size = graphics.MeasureString(this.data.Name, font, false);
 
 			graphics.DrawString(
 				this.data.Name,

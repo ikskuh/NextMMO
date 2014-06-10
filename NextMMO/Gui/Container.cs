@@ -87,6 +87,14 @@ namespace NextMMO.Gui
 			}
 		}
 
+		public void SignalKeyPress(char c)
+		{
+			var e = this.SelectedElement;
+			if(e == null) return;
+
+			e.SignalKeyPress(c);
+		}
+
 		protected abstract void OnDraw(IGraphics g, Rectangle rect);
 
 		protected abstract void OnInteract(GuiInteraction interaction);

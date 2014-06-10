@@ -56,13 +56,17 @@ namespace NextMMO
 
 		void DrawImage(Bitmap bitmap, Rectangle rect, Rectangle rectangle);
 
-		SizeF MeasureString(string text, Font font);
+		SizeF MeasureString(string text, Font font, bool measureWhitespace);
 
 		void DrawString(string text, Font font, Color color, float x, float y);
 
 		void ResetClip();
 
 		void SetClip(Rectangle rect);
+
+		void DrawLine(Color color, float x1, float y1, float x2, float y2);
+
+		float DPI { get; }
 	}
 
 	/// <summary>

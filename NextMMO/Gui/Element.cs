@@ -30,7 +30,7 @@ namespace NextMMO.Gui
 
 		public virtual void Draw(IGraphics graphics, Rectangle rect)
 		{
-			var size = graphics.MeasureString(this.Text, graphics.GetFont(FontSize.Medium));
+			var size = graphics.MeasureString(this.Text, graphics.GetFont(FontSize.Medium), false);
 			graphics.DrawString(
 				this.Text,
 				graphics.GetFont(FontSize.Medium),
@@ -41,7 +41,7 @@ namespace NextMMO.Gui
 
 		public virtual SizeF GetAutoSize(IGraphics graphics)
 		{
-			var size = graphics.MeasureString(this.Text, graphics.GetFont(FontSize.Medium));
+			var size = graphics.MeasureString(this.Text, graphics.GetFont(FontSize.Medium), false);
 
 			// Add spacing
 			size.Width += 4;
@@ -49,6 +49,17 @@ namespace NextMMO.Gui
 
 			return size;
 		}
+
+		/// <summary>
+		/// Signal a key press to the element.
+		/// </summary>
+		/// <param name="c"></param>
+		public void SignalKeyPress(char c)
+		{
+			this.OnKeyPress(c);
+		}
+
+		protected virtual void OnKeyPress(char c) { }
 
 		/// <summary>
 		/// Informs the element that it just got selected.

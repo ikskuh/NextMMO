@@ -61,6 +61,16 @@ namespace NextMMO.Gui
 			}
 		}
 
+		public void SignalKeyPress(char c)
+		{
+			if (this.activeContainers.Count <= 0)
+			{
+				return;
+			}
+			var active = this.activeContainers.Peek();
+			active.SignalKeyPress(c);
+		}
+
 		public bool IsActive { get { return this.activeContainers.Count > 0; } }
 	}
 }

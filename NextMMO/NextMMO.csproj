@@ -78,6 +78,7 @@
     <Compile Include="Gui\Label.cs" />
     <Compile Include="Gui\SkinnedSkin.cs" />
     <Compile Include="Gui\StretchedSkin.cs" />
+    <Compile Include="Gui\TextInput.cs" />
     <Compile Include="IGameServices.cs" />
     <Compile Include="INetworkService.cs" />
     <Compile Include="IGameResources.cs" />

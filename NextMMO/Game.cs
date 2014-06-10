@@ -105,7 +105,7 @@ namespace NextMMO
 
 
 			this.ingameMenu.Elements.Add(new Label("Game:"));
-			this.ingameMenu.Elements.Add(new Button("Character", (s, ea) => this.gui.NavigateTo(this.characterMenu)) { Height = 64 });
+			this.ingameMenu.Elements.Add(new Button("Character", (s, ea) => this.gui.NavigateTo(this.characterMenu)));
 			this.ingameMenu.Elements.Add(new Label("Options:"));
 			this.ingameMenu.Elements.Add(new Button("Debug", (s, ea) => { this.gui.NavigateTo(this.debugMenu); }));
 			this.ingameMenu.Elements.Add(new Button("Quit Game", (s, ea) => { this.Exit(); }));
@@ -124,9 +124,16 @@ namespace NextMMO
 			this.characterMenu.HorizontalSizeMode = AutoSizeMode.Default;
 			this.characterMenu.VerticalSizeMode = AutoSizeMode.AutoSize;
 
+
+			this.characterMenu.Elements.Add(new Label("Name:"));
+
+			var textInput = new TextInput("Unnamed");
+			this.characterMenu.Elements.Add(textInput);
+
 			var characterSelector = new CharacterSelector(this);
 			characterSelector.SelectionChanged += characterSelector_SelectionChanged;
 			this.characterMenu.Elements.Add(characterSelector);
+
 			this.characterMenu.Elements.Add(new Button("Back", (s, ea) => this.gui.NavigateBack()));
 		}
 
@@ -248,9 +255,18 @@ namespace NextMMO
 				case Key.E:
 					this.SpawnTestEffect();
 					break;
+				case Key.BackSpace:
+					this.gui.SignalKeyPress((char)127);
+					break;
 				default:
 					break;
 			}
+		}
+
+		protected override void OnKeyPress(KeyPressEventArgs e)
+		{
+			this.gui.SignalKeyPress(e.KeyChar);
+			base.OnKeyPress(e);
 		}
 
 		void Keyboard_KeyUp(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
