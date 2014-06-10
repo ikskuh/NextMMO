@@ -23,7 +23,7 @@ namespace NextMMO.Gui
 
 		protected virtual void OnElementsChanged()
 		{
-			
+
 		}
 
 		public void Draw()
@@ -128,7 +128,15 @@ namespace NextMMO.Gui
 		protected override void OnElementsChanged()
 		{
 			// Make sure we have a selection if possible
+			var prev = this.selection;
 			this.selection = this.selection ?? this.Elements.FirstOrDefault((x) => x.IsSelectable);
+			if (prev != this.selection)
+			{
+				if (prev != null)
+					prev.EndSelect();
+				if(this.selection != null)
+					this.selection.BeginSelect();
+			}
 		}
 
 		protected override void OnDraw(IGraphics g, Rectangle rect)
@@ -210,23 +218,31 @@ namespace NextMMO.Gui
 					{
 						if (this.Elements[i].IsSelectable)
 						{
+							if (this.selection != null)
+								this.selection.EndSelect();
 							this.selection = this.Elements[i];
+							if (this.selection != null)
+								this.selection.BeginSelect();
 							this.Services.Resources.Sounds["Gui/MenuSelect"].Play();
 							break;
 						}
-					} 
+					}
 					break;
 				case GuiInteraction.NavigateDown:
 					// Select the next element if possible
 					for (int i = this.Elements.IndexOf(this.selection) + 1; i < this.Elements.Count; i++)
 					{
-						if(this.Elements[i].IsSelectable)
+						if (this.Elements[i].IsSelectable)
 						{
+							if (this.selection != null)
+								this.selection.EndSelect();
 							this.selection = this.Elements[i];
+							if (this.selection != null)
+								this.selection.BeginSelect();
 							this.Services.Resources.Sounds["Gui/MenuSelect"].Play();
 							break;
 						}
-					} 
+					}
 					break;
 			}
 		}

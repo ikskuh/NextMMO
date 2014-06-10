@@ -71,6 +71,7 @@
     <Compile Include="GameObject.cs" />
     <Compile Include="GDIGraphics.cs" />
     <Compile Include="Gui\Button.cs" />
+    <Compile Include="Gui\CharacterSelector.cs" />
     <Compile Include="Gui\Container.cs" />
     <Compile Include="Gui\Element.cs" />
     <Compile Include="Gui\GuiManager.cs" />

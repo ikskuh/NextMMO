@@ -8,6 +8,7 @@ namespace NextMMO.Gui
 {
 	public abstract class Element
 	{
+		bool isSelected = false;
 		float width = float.NaN;
 		float height = float.NaN;
 
@@ -50,6 +51,20 @@ namespace NextMMO.Gui
 		}
 
 		/// <summary>
+		/// Informs the element that it just got selected.
+		/// </summary>
+		public void BeginSelect() { this.isSelected = true; this.OnBeginSelect(); }
+
+		/// <summary>
+		/// Informs the element that it is no longer selected.
+		/// </summary>
+		public void EndSelect() { this.isSelected = false; this.OnEndSelect(); }
+
+		protected virtual void OnBeginSelect() { }
+
+		protected virtual void OnEndSelect() { }
+
+		/// <summary>
 		/// Returns the width of this element.
 		/// </summary>
 		/// <remarks>NaN is automatic width.</remarks>
@@ -72,5 +87,10 @@ namespace NextMMO.Gui
 		public virtual string Text { get; set; }
 
 		public virtual bool IsSelectable { get { return true; } }
+
+		public bool IsSelected
+		{
+			get { return isSelected; }
+		}
 	}
 }

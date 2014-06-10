@@ -13,7 +13,7 @@ namespace NextMMO.Gui
 
 		public Label(string text) : base(text) { }
 
-		public override void Draw(IGraphics graphics, System.Drawing.Rectangle rect)
+		public override void Draw(IGraphics graphics, Rectangle rect)
 		{
 			var size = graphics.MeasureString(this.Text, graphics.GetFont(FontSize.Medium));
 			graphics.DrawString(

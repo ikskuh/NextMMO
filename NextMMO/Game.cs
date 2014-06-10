@@ -40,6 +40,7 @@ namespace NextMMO
 		GuiManager gui;
 		ListContainer ingameMenu;
 		ListContainer debugMenu;
+		ListContainer characterMenu;
 
 		public Game()
 			: base(
@@ -104,7 +105,7 @@ namespace NextMMO
 
 
 			this.ingameMenu.Elements.Add(new Label("Game:"));
-			this.ingameMenu.Elements.Add(new Button() { Text = "Character", Height = 64});
+			this.ingameMenu.Elements.Add(new Button("Character", (s, ea) => this.gui.NavigateTo(this.characterMenu)) { Height = 64 });
 			this.ingameMenu.Elements.Add(new Label("Options:"));
 			this.ingameMenu.Elements.Add(new Button("Debug", (s, ea) => { this.gui.NavigateTo(this.debugMenu); }));
 			this.ingameMenu.Elements.Add(new Button("Quit Game", (s, ea) => { this.Exit(); }));
@@ -114,8 +115,29 @@ namespace NextMMO
 			this.debugMenu.HorizontalSizeMode = AutoSizeMode.Default;
 			this.debugMenu.VerticalSizeMode = AutoSizeMode.AutoSize;
 
-			this.debugMenu.Elements.Add(new Button("Spawn Effect", (s, ea) => { this.SpawnTestEffect(); }));
-			this.debugMenu.Elements.Add(new Button("Back", (s, ea) => { this.gui.NavigateBack(); }));
+			this.debugMenu.Elements.Add(new Button("Spawn Effect", (s, ea) => this.SpawnTestEffect()));
+			this.debugMenu.Elements.Add(new Button("Back", (s, ea) => this.gui.NavigateBack()));
+
+
+			this.characterMenu = this.CreateBaseContainer();
+			this.characterMenu.Area = new Rectangle(this.ingameMenu.Area.Right + 16, 16, 192, 256);
+			this.characterMenu.HorizontalSizeMode = AutoSizeMode.Default;
+			this.characterMenu.VerticalSizeMode = AutoSizeMode.AutoSize;
+
+			var characterSelector = new CharacterSelector(this);
+			characterSelector.SelectionChanged += characterSelector_SelectionChanged;
+			this.characterMenu.Elements.Add(characterSelector);
+			this.characterMenu.Elements.Add(new Button("Back", (s, ea) => this.gui.NavigateBack()));
+		}
+
+		void characterSelector_SelectionChanged(object sender, EventArgs e)
+		{
+			CharacterSelector selector = sender as CharacterSelector;
+			this.playerData.Sprite = selector.SelectedCharacter;
+			this.player.Sprite = new AnimatedSprite(
+				this.resources.Characters[selector.SelectedCharacter],
+				new Point(16, 42));
+			this.UpdatePlayerData();
 		}
 
 		private static TileMap CreateSimpleMap()
@@ -185,10 +207,14 @@ namespace NextMMO
 				case Key.Left:
 					if (!this.gui.IsActive)
 						this.player.Direction |= MoveDirection.Left;
+					else
+						this.gui.Interact(GuiInteraction.NavigateLeft);
 					break;
 				case Key.Right:
 					if (!this.gui.IsActive)
 						this.player.Direction |= MoveDirection.Right;
+					else
+						this.gui.Interact(GuiInteraction.NavigateRight);
 					break;
 				case Key.Up:
 					if (!this.gui.IsActive)
