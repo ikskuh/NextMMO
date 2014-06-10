@@ -59,14 +59,14 @@ namespace NextMMO.Gui
 					var e = this.SelectedElement;
 					if (e != null)
 					{
-						this.Services.Sounds["Gui/MenuClick"].Play();
+						this.Services.Resources.Sounds["Gui/MenuClick"].Play();
 						e.Trigger();
 					}
 					break;
 				case GuiInteraction.Escape:
 					if(this.Cancelled != null)
 					{
-						this.Services.Sounds["Gui/MenuEscape"].Play();
+						this.Services.Resources.Sounds["Gui/MenuEscape"].Play();
 						this.Cancelled(this, EventArgs.Empty);
 					}
 					break;
@@ -141,11 +141,11 @@ namespace NextMMO.Gui
 						eRect);
 				}
 
-				var size = g.MeasureString(element.Text, this.Services.GetFont(FontSize.Medium));
+				var size = g.MeasureString(element.Text, g.GetFont(FontSize.Medium));
 
 				g.DrawString(
 					element.Text,
-					this.Services.GetFont(FontSize.Medium),
+					g.GetFont(FontSize.Medium),
 					Color.Black,
 					eRect.X + 0.5f * (eRect.Width - size.Width),
 					eRect.Y + 0.5f * (eRect.Height - size.Height));
@@ -160,7 +160,7 @@ namespace NextMMO.Gui
 			int maxWidth = 0;
 			foreach (var element in this.Elements)
 			{
-				maxWidth = Math.Max(maxWidth, (int)(g.MeasureString(element.Text, this.Services.GetFont(FontSize.Medium)).Width + 2));
+				maxWidth = Math.Max(maxWidth, (int)(g.MeasureString(element.Text, g.GetFont(FontSize.Medium)).Width + 2));
 			}
 			return 3 * this.BorderWidth + maxWidth;
 		}
@@ -177,14 +177,14 @@ namespace NextMMO.Gui
 				case GuiInteraction.NavigateUp:
 					if (this.selectedID > 0)
 					{
-						this.Services.Sounds["Gui/MenuSelect"].Play();
+						this.Services.Resources.Sounds["Gui/MenuSelect"].Play();
 						this.selectedID--;
 					}
 					break;
 				case GuiInteraction.NavigateDown:
 					if (this.selectedID < this.Elements.Count - 1)
 					{
-						this.Services.Sounds["Gui/MenuSelect"].Play();
+						this.Services.Resources.Sounds["Gui/MenuSelect"].Play();
 						this.selectedID++;
 					}
 					break;

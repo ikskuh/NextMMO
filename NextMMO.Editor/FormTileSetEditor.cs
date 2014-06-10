@@ -74,8 +74,6 @@ namespace NextMMO
 
 		IGraphics IGameServices.Graphics { get { return null; } }
 
-		ResourceManager<Bitmap> IGameServices.Bitmaps { get { return this.bitmapSource; } }
-
 		INetworkService IGameServices.Network { get { return null; } }
 
 		private void panelTileSet_Paint(object sender, PaintEventArgs e)
@@ -147,19 +145,6 @@ namespace NextMMO
 			}
 		}
 
-
-		ResourceManager<AnimatedBitmap> IGameServices.Characters
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-
-		Font IGameServices.GetFont(FontSize size)
-		{
-			throw new NotImplementedException();
-		}
-
-
 		public Random Random
 		{
 			get { throw new NotImplementedException(); }
@@ -171,8 +156,7 @@ namespace NextMMO
 			get { throw new NotImplementedException(); }
 		}
 
-
-		public ResourceManager<Sound> Sounds
+		public IGameResources Resources
 		{
 			get { throw new NotImplementedException(); }
 		}

@@ -17,10 +17,7 @@ namespace NextMMO
 	public partial class Game : GameWindow, IGameServices, INetworkService
 	{
 		bool isConnected = false;
-		ResourceManager<Bitmap> bitmapSource;
-		ResourceManager<TileSet> tileSetSource;
-		ResourceManager<AnimatedBitmap> characterSprites;
-		ResourceManager<Sound> soundSource;
+		ResourceCollection resources;
 		GDIGraphics graphicsWrapper;
 		Graphics graphics;
 		Bitmap backBuffer;
@@ -32,7 +29,6 @@ namespace NextMMO
 		MessageDispatcher dispatcher;
 
 		Dictionary<int, ProxyPlayer> proxyPlayers;
-		Font[] fonts;
 		PlayerData playerData;
 
 		EffectManager effects;
@@ -59,39 +55,13 @@ namespace NextMMO
 
 		protected override void OnLoad(EventArgs e)
 		{
-			this.bitmapSource = new ResourceManager<Bitmap>(
-				"./Data/Images/",
-				(stream) => (Bitmap)Image.FromStream(stream, false, true),
-				null,
-				".png", ".bmp", ".jpg");
-			this.tileSetSource = new ResourceManager<TileSet>(
-				"./Data/TileSets/",
-				(stream) => TileSet.Load(this, stream),
-				(stream, resource) => resource.Save(stream),
-				".tset");
-			this.characterSprites = new ResourceManager<AnimatedBitmap>(
-				"./Data/Images/Characters/",
-				(stream) => new AnimatedBitmap(new Bitmap(stream), 4, 4),
-				null,
-				".png", ".bmp", ".jpg");
-			this.soundSource = new ResourceManager<Sound>(
-				"./Data/Sounds/",
-				(stream) => new Sound(stream),
-				null,
-				".ogg");
+			this.resources = new ResourceCollection(this, "./Data/");
 
 			this.playerData = new PlayerData();
 			this.playerData.Name = "Unnamed";
 			this.playerData.Sprite = "Fighter";
 
 			this.backBuffer = new Bitmap(640, 480);
-
-			this.fonts = new[]
-				{
-					new Font(FontFamily.GenericSansSerif, 10.0f),
-					new Font(FontFamily.GenericSansSerif, 16.0f),
-					new Font(FontFamily.GenericSansSerif, 32.0f),
-				};
 
 			this.graphics = Graphics.FromImage(this.backBuffer);
 			this.graphicsWrapper = new GDIGraphics(this.graphics);
@@ -127,10 +97,10 @@ namespace NextMMO
 
 			this.world = new World(this);
 			this.world.TileMap = map;
-			this.world.TileSet = this.tileSetSource["DesertTown"];
+			this.world.TileSet = this.resources.TileSets["DesertTown"];
 
 			this.player = new ControllablePlayer(this.world, 8, 11);
-			this.player.Sprite = new AnimatedSprite(this.characterSprites[this.playerData.Sprite], new Point(16, 42));
+			this.player.Sprite = new AnimatedSprite(this.resources.Characters[this.playerData.Sprite], new Point(16, 42));
 			this.world.Entities.Add(this.player);
 
 			var config = new NetPeerConfiguration("mq32.de.NextMMO");
@@ -173,7 +143,7 @@ namespace NextMMO
 
 		private ListContainer CreateBaseContainer()
 		{
-			var baseSkin = this.bitmapSource["Skins/Blue"];
+			var baseSkin = this.resources.Bitmaps["Skins/Blue"];
 
 			var ctrl = new ListContainer(this);
 			ctrl.Background = new StretchedSkin(baseSkin, new Rectangle(0, 0, 128, 128));
@@ -192,7 +162,7 @@ namespace NextMMO
 					(float)random.NextDouble() * 480.0f),
 				Speed = 8.0f,
 				Animation = 0,
-				Sprite = new AnimatedBitmap(this.bitmapSource["Effects/Support03"], 5, 1)
+				Sprite = new AnimatedBitmap(this.resources.Bitmaps["Effects/Support03"], 5, 1)
 			};
 			this.effects.Spawn(effect);
 		}
@@ -373,7 +343,7 @@ namespace NextMMO
 			if (!this.proxyPlayers.TryGetValue(playerID, out player))
 			{
 				player = new ProxyPlayer(this);
-				player.Sprite = new AnimatedSprite(this.characterSprites["Thief"], new Point(16, 42));
+				player.Sprite = new AnimatedSprite(this.resources.Characters["Thief"], new Point(16, 42));
 				this.proxyPlayers.Add(playerID, player);
 				this.world.Entities.Add(player);
 			}
@@ -411,19 +381,12 @@ namespace NextMMO
 
 		IGraphics IGameServices.Graphics { get { return this.graphicsWrapper; } }
 
-		ResourceManager<Bitmap> IGameServices.Bitmaps { get { return this.bitmapSource; } }
-
 		INetworkService IGameServices.Network { get { return this; } }
-
-		ResourceManager<AnimatedBitmap> IGameServices.Characters { get { return this.characterSprites; } }
-
-		Font IGameServices.GetFont(FontSize size) { return this.fonts[(int)size]; }
 
 		Random IGameServices.Random { get { return this.random; } }
 
 		GameTime IGameServices.Time { get { return this.time; } }
-
-		ResourceManager<Sound> IGameServices.Sounds { get { return this.soundSource; } }
+		IGameResources IGameServices.Resources { get { return this.resources; } }
 
 		#endregion
 
@@ -443,9 +406,5 @@ namespace NextMMO
 		}
 
 		#endregion
-
-
-
-
 	}
 }

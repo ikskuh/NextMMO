@@ -28,14 +28,14 @@ namespace NextMMO.Gui
 		{
 			if (this.activeContainers.Count <= 0)
 			{
-				this.Services.Sounds["Gui/MenuSpawn"].Play();
+				this.Services.Resources.Sounds["Gui/MenuSpawn"].Play();
 			}
 			this.activeContainers.Push(container);
 		}
 
 		public void NavigateBack()
 		{
-			this.Services.Sounds["Gui/MenuEscape"].Play();
+			this.Services.Resources.Sounds["Gui/MenuEscape"].Play();
 			this.activeContainers.Pop();
 		}
 

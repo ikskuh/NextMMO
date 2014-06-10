@@ -17,26 +17,9 @@ namespace NextMMO
 		IGraphics Graphics { get; }
 
 		/// <summary>
-		/// Provides bitmap resources.
+		/// Gets the resource loader for this game.
 		/// </summary>
-		ResourceManager<Bitmap> Bitmaps { get; }
-
-		/// <summary>
-		/// Provides animated character sprites.
-		/// </summary>
-		ResourceManager<AnimatedBitmap> Characters { get; }
-
-		/// <summary>
-		/// Provides sounds.
-		/// </summary>
-		ResourceManager<Sound> Sounds { get; }
-
-		/// <summary>
-		/// Gets a font of the selected font size.
-		/// </summary>
-		/// <param name="size">Size of the font.</param>
-		/// <returns></returns>
-		Font GetFont(FontSize size);
+		IGameResources Resources { get; }
 
 		/// <summary>
 		/// Gets the network module.
@@ -59,6 +42,14 @@ namespace NextMMO
 	/// </summary>
 	public interface IGraphics
 	{
+
+		/// <summary>
+		/// Gets a font of the selected font size.
+		/// </summary>
+		/// <param name="size">Size of the font.</param>
+		/// <returns></returns>
+		Font GetFont(FontSize size);
+
 		void DrawImage(Bitmap bitmap, Rectangle rectangle);
 
 		void FillRectangle(Color color, Rectangle rect);

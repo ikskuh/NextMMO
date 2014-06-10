@@ -37,7 +37,7 @@ namespace NextMMO
 			var mode = e.Graphics.InterpolationMode;
 			e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 			e.Graphics.DrawImage(
-				this.tile.TileSet.Services.Bitmaps[this.tile.TileSet.Source],
+				this.tile.TileSet.Services.Resources.Bitmaps[this.tile.TileSet.Source],
 				new Rectangle(0, 0, this.panelTile.ClientSize.Width, this.panelTile.ClientSize.Height),
 				this.tile.Source,
 				GraphicsUnit.Pixel);

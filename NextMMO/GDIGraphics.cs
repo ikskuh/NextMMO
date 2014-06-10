@@ -11,11 +11,18 @@ namespace NextMMO
 	/// </summary>
 	public sealed class GDIGraphics : IGraphics
 	{
+		private readonly Font[] fonts;
 		private readonly Graphics graphics;
 
 		public GDIGraphics(Graphics graphics)
 		{
 			this.graphics = graphics;
+			this.fonts = new[]
+				{
+					new Font(FontFamily.GenericSansSerif, 10.0f),
+					new Font(FontFamily.GenericSansSerif, 16.0f),
+					new Font(FontFamily.GenericSansSerif, 32.0f),
+				};
 		}
 
 		public void DrawImage(Bitmap bitmap, Rectangle rectangle)
@@ -51,6 +58,11 @@ namespace NextMMO
 		public void SetClip(Rectangle rect)
 		{
 			this.graphics.SetClip(rect);
+		}
+
+		public Font GetFont(FontSize size)
+		{
+			return this.fonts[(int)size];
 		}
 	}
 }

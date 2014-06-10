@@ -29,7 +29,7 @@ namespace NextMMO
 
 			this.Sprite.Draw(graphics, cx, cy);
 
-			var font = this.Services.GetFont(FontSize.Small);
+			var font = graphics.GetFont(FontSize.Small);
 			var size = graphics.MeasureString(this.data.Name, font);
 
 			graphics.DrawString(
@@ -66,7 +66,7 @@ namespace NextMMO
 				if(this.data.Sprite != value.Sprite)
 				{
 					this.Sprite = new AnimatedSprite(
-						this.Services.Characters[value.Sprite],
+						this.Services.Resources.Characters[value.Sprite],
 						new Point(16, 42));
 				}
 				data = value; 

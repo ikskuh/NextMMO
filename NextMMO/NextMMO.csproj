@@ -75,12 +75,14 @@
     <Compile Include="Gui\GuiManager.cs" />
     <Compile Include="IGameServices.cs" />
     <Compile Include="INetworkService.cs" />
+    <Compile Include="IGameResources.cs" />
     <Compile Include="Networking\ITransferable.cs" />
     <Compile Include="Networking\MessageDispatcher.cs" />
     <Compile Include="PlayerData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyPlayer.cs" />
+    <Compile Include="ResourceCollection.cs" />
     <Compile Include="ResourceManager.cs" />
     <Compile Include="Skin.cs" />
     <Compile Include="Sound.cs" />

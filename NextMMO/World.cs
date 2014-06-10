@@ -6,17 +6,16 @@ using System.Text;
 
 namespace NextMMO
 {
-	public class World
+	public class World : GameObject
 	{
-		private readonly IGameServices services;
 		private readonly List<IEntity> entities;
 		private readonly Queue<Action> debugDraws = new Queue<Action>();
 		private TileMap map;
 		private TileSet tileSet;
 
 		public World(IGameServices services)
+			: base(services)
 		{
-			this.services = services;
 			this.entities = new List<IEntity>();
 		}
 
@@ -59,7 +58,7 @@ namespace NextMMO
 					this.entities.Sort((a, b) => Math.Sign(a.Y - b.Y));
 					foreach(var ent in this.entities)
 					{
-						ent.Draw(this.services.Graphics);
+						ent.Draw(this.Services.Graphics);
 					}
 					break;
 			}
@@ -67,8 +66,8 @@ namespace NextMMO
 
 		void map_PreRenderMap(object sender, EventArgs e)
 		{
-			this.services.Graphics.DrawImage(
-				this.services.Bitmaps["007-Ocean01"],
+			this.Services.Graphics.DrawImage(
+				this.Services.Resources.Bitmaps["007-Ocean01"],
 				new Rectangle(0, 0, 640, 480));
 		}
 
@@ -109,10 +108,5 @@ namespace NextMMO
 		}
 
 		public Bitmap Background { get; set; }
-
-		public IGameServices Services
-		{
-			get { return services; }
-		} 
 	}
 }
