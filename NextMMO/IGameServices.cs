@@ -26,6 +26,8 @@ namespace NextMMO
 		/// </summary>
 		INetworkService Network { get; }
 
+		IScriptHost ScriptHost { get; }
+
 		/// <summary>
 		/// Gets a global random module.
 		/// </summary>

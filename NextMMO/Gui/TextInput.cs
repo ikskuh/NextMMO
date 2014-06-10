@@ -9,10 +9,24 @@ namespace NextMMO.Gui
 {
 	public class TextInput : Element
 	{
+		public event EventHandler Confirmed;
+
 		public TextInput() : base() { }
 
 		public TextInput(string text) : base(text) { }
 
+		public override bool Interact(GuiInteraction interaction)
+		{
+			switch(interaction)
+			{
+				case GuiInteraction.Action:
+					if (this.Confirmed != null)
+						this.Confirmed(this, EventArgs.Empty);
+					return true;
+				default:
+					return base.Interact(interaction);
+			}
+		}
 
 		protected override void OnKeyPress(char c)
 		{

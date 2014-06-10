@@ -42,6 +42,9 @@ namespace NextMMO
 		ListContainer debugMenu;
 		ListContainer characterMenu;
 
+		ScriptHost scriptHost;
+		ScriptInterface scriptInterface;
+
 		public Game()
 			: base(
 			640, 480,
@@ -58,6 +61,10 @@ namespace NextMMO
 		protected override void OnLoad(EventArgs e)
 		{
 			this.resources = new ResourceCollection(this, "./Data/");
+
+			this.scriptHost = new ScriptHost();
+			this.scriptInterface = new ScriptInterface(this);
+			this.scriptHost.Interface = this.scriptInterface;
 
 			this.playerData = new PlayerData();
 			this.playerData.Name = "Unnamed";
@@ -78,6 +85,17 @@ namespace NextMMO
 			this.player.Sprite = new AnimatedSprite(this.resources.Characters[this.playerData.Sprite], new Point(16, 42));
 			this.world.Focus = this.player;
 			this.world.Entities.Add(this.player);
+
+			var thingy = new ScriptableEntity(this.world);
+			thingy.Teleport(8, 13);
+			thingy.Sprite = new AnimatedSprite(new AnimatedBitmap(this.resources.Bitmaps["WaterFalls"], 4, 4), new Point(48, 48))
+			{
+				Animation = 2,
+				AnimationSpeed = 8.0f,
+			};
+			thingy.Script = "Game:PlaySound(\"BitchSlap\")";
+			thingy.Colliders.Add(new Rectangle(-48, -8, 96, 56));
+			this.world.Entities.Add(thingy);
 
 			var config = new NetPeerConfiguration("mq32.de.NextMMO");
 			this.network = new NetClient(config);
@@ -116,6 +134,8 @@ namespace NextMMO
 			this.debugMenu.VerticalSizeMode = AutoSizeMode.AutoSize;
 
 			this.debugMenu.Elements.Add(new Button("Spawn Effect", (s, ea) => this.SpawnTestEffect()));
+			this.debugMenu.Elements.Add(new Button("Show Colliders", (s, ea) => this.world.EnableDebug = true));
+			this.debugMenu.Elements.Add(new Button("Hide Colliders", (s, ea) => this.world.EnableDebug = false));
 			this.debugMenu.Elements.Add(new Button("Back", (s, ea) => this.gui.NavigateBack()));
 
 
@@ -128,6 +148,7 @@ namespace NextMMO
 			this.characterMenu.Elements.Add(new Label("Name:"));
 
 			var textInput = new TextInput("Unnamed");
+			textInput.Confirmed += textInput_Confirmed;
 			this.characterMenu.Elements.Add(textInput);
 
 			var characterSelector = new CharacterSelector(this);
@@ -135,6 +156,13 @@ namespace NextMMO
 			this.characterMenu.Elements.Add(characterSelector);
 
 			this.characterMenu.Elements.Add(new Button("Back", (s, ea) => this.gui.NavigateBack()));
+		}
+
+		void textInput_Confirmed(object sender, EventArgs e)
+		{
+			TextInput textInput = sender as TextInput;
+			this.playerData.Name = textInput.Text;
+			this.UpdatePlayerData();
 		}
 
 		void characterSelector_SelectionChanged(object sender, EventArgs e)
@@ -240,6 +268,8 @@ namespace NextMMO
 				case Key.Space:
 					if (this.gui.IsActive)
 						this.gui.Interact(GuiInteraction.Action);
+					else
+						this.player.Interact(this.world);
 					break;
 				case Key.Escape:
 					if (this.gui.IsActive)
@@ -438,7 +468,10 @@ namespace NextMMO
 		Random IGameServices.Random { get { return this.random; } }
 
 		GameTime IGameServices.Time { get { return this.time; } }
+
 		IGameResources IGameServices.Resources { get { return this.resources; } }
+
+		IScriptHost IGameServices.ScriptHost { get { return this.scriptHost; } }
 
 		#endregion
 
@@ -458,5 +491,6 @@ namespace NextMMO
 		}
 
 		#endregion
+
 	}
 }

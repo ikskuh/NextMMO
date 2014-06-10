@@ -56,7 +56,7 @@ namespace NextMMO
 
 					foreach (var rect in this.tileSet[id].CreateEnvironment(x, y))
 					{
-						this.graphics.FillRectangle(TileCollider.DebugBrush, rect);
+						this.graphics.FillRectangle(TileCollider.DebugBrush, (rect as Collider.TileCollider).Rectangle);
 					}
 				}
 			}
@@ -157,6 +157,12 @@ namespace NextMMO
 		}
 
 		public IGameResources Resources
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+
+		public IScriptHost ScriptHost
 		{
 			get { throw new NotImplementedException(); }
 		}

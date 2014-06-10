@@ -52,6 +52,106 @@ namespace NextMMO
 
 		}
 
+		public delegate Collider EnvironmentCheckDelegate(double x, double y, double size);
+
+		/// <summary>
+		/// Triggers an entity at a given position.
+		/// </summary>
+		/// <param name="actuator">The actuatuor that triggers the entity.</param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="radius"></param>
+		/// <returns></returns>
+		public bool TriggerAt(Entity actuator, double x, double y, double radius)
+		{
+			var environment = BuildEnvironment(x, y);
+
+			var collider = environment(x, y, 2.0 * radius);
+
+			if (collider == null)
+				return false;
+
+			Collider.EntityCollider entCol = collider as Collider.EntityCollider;
+			if (entCol == null)
+				return false;
+
+			if (entCol.Entity == null)
+				throw new InvalidOperationException("Invalid collider detected!");
+
+			entCol.Entity.Trigger(actuator);
+
+			return true;
+		}
+
+		/// <summary>
+		/// Creates a delegate that can check for collisions at the given position.
+		/// </summary>
+		/// <returns>Collision checking delegate.</returns>
+		public EnvironmentCheckDelegate BuildEnvironment(double x, double y)
+		{
+			int cx = (int)(x / 32.0 + 0.5);
+			int cy = (int)(y / 32.0 + 0.5);
+			var map = this.TileMap;
+
+			// Build "environment" of collision rectangles
+			List<Collider> environment = new List<Collider>();
+
+			// Add "static" environment (contains world boundaries)
+			environment.Add(new Collider.BoundaryCollider(new Rectangle(0, 0, 2, 32 * this.TileMap.Height)));
+			environment.Add(new Collider.BoundaryCollider(new Rectangle(32 * this.TileMap.Width - 2, 0, 2, 32 * this.TileMap.Height)));
+
+			environment.Add(new Collider.BoundaryCollider(new Rectangle(0, 0, 32 * this.TileMap.Width, 2)));
+			environment.Add(new Collider.BoundaryCollider(new Rectangle(0, 32 * this.TileMap.Height - 2, 32 * this.TileMap.Width, 2)));
+
+			// Add "dynamic" environment (contains tile information around the player)
+			for (int layer = 0; layer < 2; layer++) // Use only the lower two layers
+			{
+				for (int px = Math.Max(0, cx - 1); px < Math.Min(map.Width, cx + 2); px++)
+				{
+					for (int py = Math.Max(0, cy - 1); py < Math.Min(map.Height, cy + 2); py++)
+					{
+						environment.AddRange(this.TileSet[this.TileMap[px, py][layer]].CreateEnvironment(px, py));
+					}
+				}
+			}
+
+			foreach (var entity in this.Entities)
+			{
+				foreach (var collider in entity.GetColliders())
+				{
+					collider.Translate(32 * entity.X + 16, 32 * entity.Y + 16);
+					environment.Add(collider);
+				}
+			}
+
+			// Debug environment
+
+			foreach (var rect in environment)
+			{
+				this.Debug(rect.Rectangle, rect.Color);
+			}
+
+			return (_x, _y, _size) =>
+			{
+				int size = (int)(32 * _size);
+				Rectangle entity = new Rectangle(
+					(int)_x - size / 2,
+					(int)_y - size / 2,
+					size,
+					size);
+
+				// Debug entity collider
+				//this.world.Debug(entity, Color.Magenta);
+
+				foreach (var collider in environment)
+				{
+					if (collider.IntersectsWith(entity))
+						return collider; // Cancel translation, we will intersect with a wall
+				}
+				return null;
+			};
+		}
+
 		public void Draw()
 		{
 			this.TileMap.Draw(this.Services.Graphics);
@@ -63,11 +163,17 @@ namespace NextMMO
 
 		public void Debug(Rectangle rect, Color color)
 		{
+			if (!this.EnableDebug)
+				return;
 			this.debugDraws.Enqueue(() =>
 				{
 					this.Services.Graphics.FillRectangle(
 						Color.FromArgb(128, color.R, color.G, color.B),
-						rect);
+						new Rectangle(
+							rect.Left - (int)this.scrollX,
+							rect.Top - (int)this.scrollY,
+							rect.Width,
+							rect.Height));
 				});
 		}
 
@@ -136,5 +242,7 @@ namespace NextMMO
 		public Bitmap Background { get; set; }
 
 		public Entity Focus { get; set; }
+
+		public bool EnableDebug { get; set; }
 	}
 }

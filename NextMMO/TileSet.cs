@@ -170,10 +170,9 @@ namespace NextMMO
 		/// <param name="x">X-coordinate of the environment in tile coordinates.</param>
 		/// <param name="y">Y-coordinate of the environment in tile coordinates.</param>
 		/// <returns>Array of rectangles containing the collision environment.</returns>
-		public Rectangle[] CreateEnvironment(int x, int y)
+		public Collider[] CreateEnvironment(int x, int y)
 		{
-			List<Rectangle> environment = new List<Rectangle>();
-
+			List<Collider> environment = new List<Collider>();
 			foreach (var collider in this.colliders)
 			{
 				Rectangle rect = new Rectangle(
@@ -181,9 +180,8 @@ namespace NextMMO
 					32 * y + collider.Rectangle.Y,
 					collider.Rectangle.Width,
 					collider.Rectangle.Height);
-				environment.Add(rect);
+				environment.Add(new Collider.TileCollider(this, rect));
 			}
-
 			return environment.ToArray();
 		}
 

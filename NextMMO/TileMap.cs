@@ -43,7 +43,7 @@ namespace NextMMO
 
 			writer.Write("TILEMAP"); // Identifier
 			writer.Write(1); // Version Major
-			writer.Write(0); // Version Minor
+			writer.Write(1); // Version Minor
 
 			writer.Write(this.Width);
 			writer.Write(this.Height);
@@ -57,7 +57,7 @@ namespace NextMMO
 					{
 						writer.Write(tile[layer]);
 					}
-					writer.Write(tile.Script);
+					//writer.Write(tile.Script);
 				}
 			}
 		}
@@ -68,29 +68,35 @@ namespace NextMMO
 
 			if (reader.ReadString() != "TILEMAP")
 				throw new InvalidDataException();
-			if (reader.ReadInt32() != 1)
-				throw new InvalidDataException();
-			if (reader.ReadInt32() != 0)
-				throw new InvalidDataException();
-
-			int width = reader.ReadInt32();
-			int height = reader.ReadInt32();
-
-			var map = new TileMap(width, height);
-			for (int x = 0; x < map.Width; x++)
+			int major = reader.ReadInt32();
+			int minor = reader.ReadInt32();
+			switch (major)
 			{
-				for (int y = 0; y < map.Height; y++)
-				{
-					var tile = map.tiles[x, y];
-					for (int layer = 0; layer < TileMap.LayerCount; layer++)
-					{
-						tile[layer] = reader.ReadInt32();
-					}
-					tile.Script = reader.ReadString();
-				}
-			}
+				case 1:
+					int width = reader.ReadInt32();
+					int height = reader.ReadInt32();
 
-			return map;
+					var map = new TileMap(width, height);
+					for (int x = 0; x < map.Width; x++)
+					{
+						for (int y = 0; y < map.Height; y++)
+						{
+							var tile = map.tiles[x, y];
+							for (int layer = 0; layer < TileMap.LayerCount; layer++)
+							{
+								tile[layer] = reader.ReadInt32();
+							}
+							if(minor == 0)
+							{
+								// Read deprecated "Script" string
+								reader.ReadString();
+							}
+						}
+					}
+					return map;
+				default:
+					throw new InvalidDataException();
+			}
 		}
 
 		#endregion
@@ -136,7 +142,7 @@ namespace NextMMO
 
 		public Tile()
 		{
-			this.Script = "";
+
 		}
 
 		public int this[int layer]
@@ -144,7 +150,6 @@ namespace NextMMO
 			get { return this.sprites[layer]; }
 			set { this.sprites[layer] = value; }
 		}
-		public string Script { get; set; }
 	}
 
 	public sealed class RenderMapEventArgs : EventArgs

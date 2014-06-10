@@ -10,6 +10,8 @@ namespace NextMMO
 	{
 		void Update();
 
+		void Trigger(Entity other);
+
 		void Draw(IGraphics graphics, float deltaX, float deltaY);
 
 		double X { get; }
@@ -17,6 +19,8 @@ namespace NextMMO
 		double Y { get; }
 
 		Sprite Sprite { get; }
+
+		IEnumerable<Collider> GetColliders();
 	}
 
 	public class IEntityComparer : IComparer<IEntity>
@@ -33,11 +37,12 @@ namespace NextMMO
 		}
 	}
 
-	public class Entity : IEntity
+	public abstract class Entity : IEntity
 	{
+		internal static readonly Collider[] emptyColliders = new Collider[0];
 		private readonly World world;
-		private float x;
-		private float y;
+		private double x;
+		private double y;
 
 		public Entity(World world)
 		{
@@ -52,10 +57,9 @@ namespace NextMMO
 			this.y = y;
 		}
 
-		public virtual void Update()
-		{
+		public virtual void Update() { }
 
-		}
+		public virtual void Trigger(Entity other) { }
 
 		public virtual void Draw(IGraphics graphics, float deltaX, float deltaY)
 		{
@@ -65,67 +69,45 @@ namespace NextMMO
 				(int)(32 * this.y - deltaY));
 		}
 
-		public void Translate(float deltaX, float deltaY)
+		public virtual IEnumerable<Collider> GetColliders()
 		{
-			var map = this.world.TileMap;
+			return Entity.emptyColliders;
+		}
 
-			int cx = (int)(this.x + 0.5);
-			int cy = (int)(this.y + 0.5);
-			int size = (int)(32 * this.Size);
+		/// <summary>
+		/// Teleports the entity to the given position.
+		/// </summary>
+		/// <param name="x">X coordinate to teleport to.</param>
+		/// <param name="y">Y coordinate to teleport to.</param>
+		/// <returns>true if the teleportation succeeded.</returns>
+		public bool Teleport(double x, double y)
+		{
+			var testCollision = this.world.BuildEnvironment(32 * this.x, 32 * this.y);
 
-			// Build "environment" of collision rectangles
-			List<Rectangle> environment = new List<Rectangle>();
+			if (testCollision((int)(32 * x + 16), (int)(32 * y + 16), this.Size) != null)
+				return false;
 
-			// Add "static" environment (contains world boundaries)
-			environment.Add(new Rectangle(0, 0, 2, 32 * this.world.TileMap.Height));
-			environment.Add(new Rectangle(32 * this.world.TileMap.Width - 2, 0, 2, 32 * this.world.TileMap.Height));
+			this.x = x;
+			this.y = y;
 
-			environment.Add(new Rectangle(0, 0, 32 * this.world.TileMap.Width, 2));
-			environment.Add(new Rectangle(0, 32 * this.world.TileMap.Height - 2, 32 * this.world.TileMap.Width, 2));
+			return true;
+		}
 
-			// Add "dynamic" environment (contains tile information around the player)
-			for (int layer = 0; layer < 2; layer++) // Use only the lower two layers
-			{
-				for (int px = Math.Max(0, cx - 1); px < Math.Min(map.Width, cx + 2); px++)
-				{
-					for (int py = Math.Max(0, cy - 1); py < Math.Min(map.Height, cy + 2); py++)
-					{
-						environment.AddRange(this.world.TileSet[this.world.TileMap[px, py][layer]].CreateEnvironment(px, py));
-					}
-				}
-			}
-
-			// Debug environment
-			//foreach (var rect in environment)
-			//{
-			//	this.world.Debug(rect, Color.Lime);
-			//}
-
-			Func<int, int, bool> testCollision = (_x, _y) =>
-				{
-					Rectangle entity = new Rectangle(
-						_x - size / 2,
-						_y - size / 2,
-						size,
-						size);
-
-					// Debug entity collider
-					//this.world.Debug(entity, Color.Magenta);
-
-					foreach (var rect in environment)
-					{
-						if (rect.IntersectsWith(entity))
-							return true; // Cancel translation, we will intersect with a wall
-					}
-					return false;
-				};
+		/// <summary>
+		/// Moves the entity with collision detection.
+		/// </summary>
+		/// <param name="deltaX">X delta to move.</param>
+		/// <param name="deltaY">Y delta to move.</param>
+		public void Translate(double deltaX, double deltaY)
+		{
+			var testCollision = this.world.BuildEnvironment(32 * this.x, 32 * this.y);
 
 			var newX = this.x + deltaX;
 			var newY = this.y + deltaY;
 
-			if (testCollision((int)(32 * newX + 16), (int)(32 * this.y + 16)))
+			if (testCollision((int)(32 * newX + 16), (int)(32 * this.y + 16), this.Size) != null)
 				deltaX = 0; // Elimitate x movement
-			if (testCollision((int)(32 * this.X + 16), (int)(32 * newY + 16)))
+			if (testCollision((int)(32 * this.X + 16), (int)(32 * newY + 16), this.Size) != null)
 				deltaY = 0; // Elimitate x movement
 
 			this.x += deltaX;

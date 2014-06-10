@@ -22,6 +22,13 @@ namespace NextMMO
 
 		}
 
+		public IEnumerable<Collider> GetColliders()
+		{
+			return Entity.emptyColliders;
+		}
+
+		public void Trigger(Entity other) { }
+
 		public void Draw(IGraphics graphics, float deltaX, float deltaY)
 		{
 			int cx = (int)(32 * this.X - deltaX);

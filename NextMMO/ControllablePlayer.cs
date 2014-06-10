@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -73,9 +74,38 @@ namespace NextMMO
 			this.isWalking = walking;
 		}
 
-		public void Interact()
+		public void Interact(World world)
 		{
+			double dx = 0;
+			double dy = 0;
+			switch(this.Sprite.Animation)
+			{
+				case 0:
+					dx = 0;
+					dy = 32 * this.Size;
+					break;
+				case 1:
+					dx = -32 * this.Size;
+					dy = 0;
+					break;
+				case 2:
+					dx = 32 * this.Size;
+					dy = 0;
+					break;
+				case 3:
+					dx = 0;
+					dy = -32 * this.Size;
+					break;
+			}
 
+			double x = 32 * this.X + 16 + dx;
+			double y = 32 * this.Y + 16 + dy;
+
+			world.TriggerAt(
+				this,
+				x, y,
+				0.25);
+			world.Debug(new Rectangle((int)x - 3, (int)y - 3, 6, 6), Color.Magenta);
 		}
 
 		public MoveDirection Direction { get; set; }
