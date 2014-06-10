@@ -43,7 +43,6 @@ namespace NextMMO
 				if (fx < this.scrollX + delta)
 					this.scrollX = Math.Max(fx - delta, 0);
 
-
 				// Vertical scrolling
 				if (fy > sh + this.scrollY - delta)
 					this.scrollY = Math.Min(fy - sh + delta, 32 * this.map.Height - sh);

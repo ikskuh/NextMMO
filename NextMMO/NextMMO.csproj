@@ -70,9 +70,13 @@
     <Compile Include="Game.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="GDIGraphics.cs" />
+    <Compile Include="Gui\Button.cs" />
     <Compile Include="Gui\Container.cs" />
     <Compile Include="Gui\Element.cs" />
     <Compile Include="Gui\GuiManager.cs" />
+    <Compile Include="Gui\Label.cs" />
+    <Compile Include="Gui\SkinnedSkin.cs" />
+    <Compile Include="Gui\StretchedSkin.cs" />
     <Compile Include="IGameServices.cs" />
     <Compile Include="INetworkService.cs" />
     <Compile Include="IGameResources.cs" />
@@ -84,7 +88,7 @@
     <Compile Include="ProxyPlayer.cs" />
     <Compile Include="ResourceCollection.cs" />
     <Compile Include="ResourceManager.cs" />
-    <Compile Include="Skin.cs" />
+    <Compile Include="Gui\Skin.cs" />
     <Compile Include="Sound.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="TileMap.cs" />
@@ -159,6 +163,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\Images\020-DesertTown02.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Images\Characters\CBabe.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\Images\Characters\Fighter.png">

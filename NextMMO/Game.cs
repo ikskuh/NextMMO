@@ -60,7 +60,7 @@ namespace NextMMO
 
 			this.playerData = new PlayerData();
 			this.playerData.Name = "Unnamed";
-			this.playerData.Sprite = "Fighter";
+			this.playerData.Sprite = "Lancer";
 
 			this.backBuffer = new Bitmap(640, 480);
 
@@ -99,21 +99,23 @@ namespace NextMMO
 
 			this.ingameMenu = this.CreateBaseContainer();
 			this.ingameMenu.Area = new Rectangle(16, 16, 192, 384);
-			this.ingameMenu.HorizontalSizeMode = AutoSizeMode.Default;
+			this.ingameMenu.HorizontalSizeMode = AutoSizeMode.AutoSize;
 			this.ingameMenu.VerticalSizeMode = AutoSizeMode.AutoSize;
 
 
-			this.ingameMenu.Elements.Add(new Element() { Text = "Character" });
-			this.ingameMenu.Elements.Add(new Element("Debug", (s, ea) => { this.gui.NavigateTo(this.debugMenu); }));
-			this.ingameMenu.Elements.Add(new Element("Quit Game", (s, ea) => { this.Exit(); }));
+			this.ingameMenu.Elements.Add(new Label("Game:"));
+			this.ingameMenu.Elements.Add(new Button() { Text = "Character", Height = 64});
+			this.ingameMenu.Elements.Add(new Label("Options:"));
+			this.ingameMenu.Elements.Add(new Button("Debug", (s, ea) => { this.gui.NavigateTo(this.debugMenu); }));
+			this.ingameMenu.Elements.Add(new Button("Quit Game", (s, ea) => { this.Exit(); }));
 
 			this.debugMenu = this.CreateBaseContainer();
 			this.debugMenu.Area = new Rectangle(this.ingameMenu.Area.Right + 16, 16, 192, 256);
 			this.debugMenu.HorizontalSizeMode = AutoSizeMode.Default;
 			this.debugMenu.VerticalSizeMode = AutoSizeMode.AutoSize;
 
-			this.debugMenu.Elements.Add(new Element("Spawn Effect", (s, ea) => { this.SpawnTestEffect(); }));
-			this.debugMenu.Elements.Add(new Element("Back", (s, ea) => { this.gui.NavigateBack(); }));
+			this.debugMenu.Elements.Add(new Button("Spawn Effect", (s, ea) => { this.SpawnTestEffect(); }));
+			this.debugMenu.Elements.Add(new Button("Back", (s, ea) => { this.gui.NavigateBack(); }));
 		}
 
 		private static TileMap CreateSimpleMap()

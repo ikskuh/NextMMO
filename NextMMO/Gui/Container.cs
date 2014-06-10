@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -9,14 +10,20 @@ namespace NextMMO.Gui
 {
 	public abstract class Container : GameObject
 	{
-		readonly List<Element> elements = new List<Element>();
+		//readonly List<Element> elements = new List<Element>();
+		readonly ObservableCollection<Element> elements = new ObservableCollection<Element>();
 
 		public event EventHandler Cancelled;
 
 		public Container(IGameServices services)
 			: base(services)
 		{
+			elements.CollectionChanged += (s, e) => this.OnElementsChanged();
+		}
 
+		protected virtual void OnElementsChanged()
+		{
+			
 		}
 
 		public void Draw()
@@ -55,22 +62,26 @@ namespace NextMMO.Gui
 		{
 			switch (interaction)
 			{
-				case GuiInteraction.Action:
-					var e = this.SelectedElement;
-					if (e != null)
-					{
-						this.Services.Resources.Sounds["Gui/MenuClick"].Play();
-						e.Trigger();
-					}
-					break;
 				case GuiInteraction.Escape:
-					if(this.Cancelled != null)
+					if (this.Cancelled != null)
 					{
 						this.Services.Resources.Sounds["Gui/MenuEscape"].Play();
 						this.Cancelled(this, EventArgs.Empty);
 					}
 					break;
 				default:
+					var e = this.SelectedElement;
+					if (e != null)
+					{
+						if (e.Interact(interaction))
+						{
+							if (interaction == GuiInteraction.Action)
+							{
+								this.Services.Resources.Sounds["Gui/MenuClick"].Play();
+							}
+							return;
+						}
+					}
 					this.OnInteract(interaction);
 					break;
 			}
@@ -106,12 +117,18 @@ namespace NextMMO.Gui
 
 	public class ListContainer : Container
 	{
-		int selectedID = 0;
-
+		private Element selection;
 		public ListContainer(IGameServices services)
 			: base(services)
 		{
 			this.BorderWidth = 16;
+			this.DefaultElementHeight = 24;
+		}
+
+		protected override void OnElementsChanged()
+		{
+			// Make sure we have a selection if possible
+			this.selection = this.selection ?? this.Elements.FirstOrDefault((x) => x.IsSelectable);
 		}
 
 		protected override void OnDraw(IGraphics g, Rectangle rect)
@@ -122,35 +139,34 @@ namespace NextMMO.Gui
 				rect.Width - 2 * this.BorderWidth,
 				rect.Height - 2 * this.BorderWidth));
 
-			int id = 0;
+			int offset = 0;
 			foreach (var element in this.Elements)
 			{
+				int height;
+				if (float.IsNaN(element.Height))
+					height = (int)element.GetAutoSize(g).Height;
+				else
+					height = (int)element.Height;
+
 				Rectangle eRect = new Rectangle(
 					rect.Left + this.BorderWidth,
-					rect.Top + this.BorderWidth + 32 * id,
+					rect.Top + this.BorderWidth + offset,
 					rect.Width - 2 * this.BorderWidth,
-					24);
+					height);
 
 				if (eRect.Top > rect.Bottom)
 					break;
 
-				if (id == this.selectedID)
+				if (element == this.SelectedElement)
 				{
 					this.ElementSkin.Draw(
 						g,
 						eRect);
 				}
 
-				var size = g.MeasureString(element.Text, g.GetFont(FontSize.Medium));
+				element.Draw(g, eRect);
 
-				g.DrawString(
-					element.Text,
-					g.GetFont(FontSize.Medium),
-					Color.Black,
-					eRect.X + 0.5f * (eRect.Width - size.Width),
-					eRect.Y + 0.5f * (eRect.Height - size.Height));
-
-				id++;
+				offset += height + 8;
 			}
 
 		}
@@ -160,14 +176,28 @@ namespace NextMMO.Gui
 			int maxWidth = 0;
 			foreach (var element in this.Elements)
 			{
-				maxWidth = Math.Max(maxWidth, (int)(g.MeasureString(element.Text, g.GetFont(FontSize.Medium)).Width + 2));
+				// Is auto sized. Ignore element
+				if (float.IsNaN(element.Width))
+					maxWidth = Math.Max(maxWidth, (int)element.GetAutoSize(g).Width);
+				else
+					maxWidth = Math.Max(maxWidth, (int)element.Width);
 			}
 			return 3 * this.BorderWidth + maxWidth;
 		}
 
 		protected override int GetAutoHeight(IGraphics g)
 		{
-			return 2 * this.BorderWidth + 24 * this.Elements.Count + 8 * (this.Elements.Count - 1);
+			int height = 0;
+			foreach (var element in this.Elements)
+			{
+				height += 8;
+				// Is auto sized. Ignore element
+				if (float.IsNaN(element.Height))
+					height += (int)element.GetAutoSize(g).Height;
+				else
+					height += (int)element.Height;
+			}
+			return 2 * this.BorderWidth + height - 8;
 		}
 
 		protected override void OnInteract(GuiInteraction interaction)
@@ -175,36 +205,39 @@ namespace NextMMO.Gui
 			switch (interaction)
 			{
 				case GuiInteraction.NavigateUp:
-					if (this.selectedID > 0)
+					// Select the previous element if possible
+					for (int i = this.Elements.IndexOf(this.selection) - 1; i >= 0; i--)
 					{
-						this.Services.Resources.Sounds["Gui/MenuSelect"].Play();
-						this.selectedID--;
-					}
+						if (this.Elements[i].IsSelectable)
+						{
+							this.selection = this.Elements[i];
+							this.Services.Resources.Sounds["Gui/MenuSelect"].Play();
+							break;
+						}
+					} 
 					break;
 				case GuiInteraction.NavigateDown:
-					if (this.selectedID < this.Elements.Count - 1)
+					// Select the next element if possible
+					for (int i = this.Elements.IndexOf(this.selection) + 1; i < this.Elements.Count; i++)
 					{
-						this.Services.Resources.Sounds["Gui/MenuSelect"].Play();
-						this.selectedID++;
-					}
+						if(this.Elements[i].IsSelectable)
+						{
+							this.selection = this.Elements[i];
+							this.Services.Resources.Sounds["Gui/MenuSelect"].Play();
+							break;
+						}
+					} 
 					break;
 			}
 		}
 
-		public override Element SelectedElement
-		{
-			get
-			{
-				if (this.selectedID >= 0)
-					return this.Elements[this.selectedID];
-				else
-					return null;
-			}
-		}
+		public override Element SelectedElement { get { return this.selection; } }
 
 		public Skin ElementSkin { get; set; }
 
 		public int BorderWidth { get; set; }
+
+		public int DefaultElementHeight { get; set; }
 	}
 
 	public enum GuiInteraction

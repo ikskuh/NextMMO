@@ -5,36 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NextMMO
+namespace NextMMO.Gui
 {
-	public abstract class Skin
-	{
-		protected Skin(Bitmap skin)
-		{
-			this.Bitmap = skin;
-		}
-
-		public abstract void Draw(IGraphics g, Rectangle target);
-
-		public Bitmap Bitmap { get; set; }
-	}
-
-	public class StretchedSkin : Skin
-	{
-		public StretchedSkin(Bitmap skin, Rectangle source)
-			: base(skin)
-		{
-			this.Source = source;
-		}
-
-		public override void Draw(IGraphics g, Rectangle target)
-		{
-			g.DrawImage(this.Bitmap, target, this.Source);
-		}
-
-		public Rectangle Source { get; set; }
-	}
-
 	public class SkinnedSkin : Skin
 	{
 		public SkinnedSkin(Bitmap skin, Rectangle area)
@@ -80,25 +52,55 @@ namespace NextMMO
 			switch (mode)
 			{
 				case BorderWrapMode.Tile:
-					for (int px = 0; px < width - this.TopLeft.Width - this.TopRight.Width; px += this.Top.Width)
+					int areaWidth = width - this.TopLeft.Width - this.TopRight.Width;
+					for (int px = 0; px < areaWidth; px += this.Top.Width)
 					{
-						g.DrawImage(
-							skin,
-							new Rectangle(
-								x + this.TopLeft.Width + px,
-								y,
-								this.Top.Width,
-								this.Top.Height),
-							this.Top);
-						// Bottom bar
-						g.DrawImage(
-							skin,
-							new Rectangle(
-								x + this.BottomLeft.Width + px,
-								y + height - this.Bottom.Height,
-								this.Bottom.Width,
-								this.Bottom.Height),
-							this.Bottom);
+						if (px + this.Top.Width <= areaWidth)
+						{
+							g.DrawImage(
+									skin,
+									new Rectangle(
+										x + this.TopLeft.Width + px,
+										y,
+										this.Top.Width,
+										this.Top.Height),
+									this.Top);
+							// Bottom bar
+							g.DrawImage(
+								skin,
+								new Rectangle(
+									x + this.BottomLeft.Width + px,
+									y + height - this.Bottom.Height,
+									this.Bottom.Width,
+									this.Bottom.Height),
+								this.Bottom);
+						}
+						else
+						{
+							g.DrawImage(
+									skin,
+									new Rectangle(
+										x + this.TopLeft.Width + px,
+										y,
+										areaWidth- px,
+										this.Top.Height),
+									new Rectangle(this.Top.Location, this.Top.Size)
+										{
+											Width = areaWidth - px
+										});
+							// Bottom bar
+							g.DrawImage(
+									skin,
+									new Rectangle(
+										x + this.BottomLeft.Width + px,
+										y + height - this.Bottom.Height,
+										areaWidth - px,
+										this.Bottom.Height),
+									new Rectangle(this.Bottom.Location, this.Bottom.Size)
+									{
+										Width = areaWidth - px
+									});
+						}
 					}
 					for (int py = 0; py < height - this.TopLeft.Height - this.BottomLeft.Height; py += 32)
 					{

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NextMMO.Gui;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Windows.Forms;
 
 namespace NextMMO
 {
-	public class SkinnedButton : Button
+	public class SkinnedButton : System.Windows.Forms.Button
 	{
 		public SkinnedButton()
 		{
@@ -30,7 +31,7 @@ namespace NextMMO
 			else
 			{
 				g.Clear(Color.Transparent);
-				NextMMO.SkinnedSkin renderer = new NextMMO.SkinnedSkin(this.Skin, new Rectangle(128, 64, 32, 32));
+				SkinnedSkin renderer = new SkinnedSkin(this.Skin, new Rectangle(128, 64, 32, 32));
 				renderer.WrapMode = BorderWrapMode.Stretch;
 				//renderer.Draw(g, new Rectangle(0, 0, width, height));
 				throw new NotImplementedException();
