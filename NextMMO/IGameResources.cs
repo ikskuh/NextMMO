@@ -22,5 +22,10 @@ namespace NextMMO
 		/// Provides sounds.
 		/// </summary>
 		ResourceManager<Sound> Sounds { get; }
+
+		/// <summary>
+		/// Provides tile maps.
+		/// </summary>
+		ResourceManager<TileMap> Maps { get; }
 	}
 }

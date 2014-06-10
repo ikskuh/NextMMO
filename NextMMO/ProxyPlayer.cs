@@ -22,10 +22,10 @@ namespace NextMMO
 
 		}
 
-		public void Draw(IGraphics graphics)
+		public void Draw(IGraphics graphics, float deltaX, float deltaY)
 		{
-			int cx = (int)(32 * this.X);
-			int cy = (int)(32 * this.Y);
+			int cx = (int)(32 * this.X - deltaX);
+			int cy = (int)(32 * this.Y - deltaY);
 
 			this.Sprite.Draw(graphics, cx, cy);
 

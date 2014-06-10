@@ -52,7 +52,7 @@ namespace NextMMO
 				{
 					int id = y * this.tileSet.SizeX + x + 1;
 
-					this.tileSet[id].Draw(x, y);
+					this.tileSet[id].Draw(null, 32 * x, 32* y);
 
 					foreach (var rect in this.tileSet[id].CreateEnvironment(x, y))
 					{

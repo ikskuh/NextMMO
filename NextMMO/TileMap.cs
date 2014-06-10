@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace NextMMO
 
 		private readonly Tile[,] tiles;
 
-		public event EventHandler PreRenderMap;
+		public event EventHandler<RenderMapEventArgs> PreRenderMap;
 		public event EventHandler<RenderTileEventArgs> RenderTile;
 		public event EventHandler<RenderLayerEventArgs> PreRenderLayer;
 		public event EventHandler<RenderLayerEventArgs> PostRenderLayer;
@@ -34,29 +35,89 @@ namespace NextMMO
 			}
 		}
 
-		public void Draw(Rectangle rect)
+		#region Save/Load
+
+		public void Save(Stream stream)
+		{
+			BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8);
+
+			writer.Write("TILEMAP"); // Identifier
+			writer.Write(1); // Version Major
+			writer.Write(0); // Version Minor
+
+			writer.Write(this.Width);
+			writer.Write(this.Height);
+
+			for (int x = 0; x < this.Width; x++)
+			{
+				for (int y = 0; y < this.Height; y++)
+				{
+					var tile = this.tiles[x, y];
+					for (int layer = 0; layer < TileMap.LayerCount; layer++)
+					{
+						writer.Write(tile[layer]);
+					}
+					writer.Write(tile.Script);
+				}
+			}
+		}
+
+		public static TileMap Load(Stream stream)
+		{
+			BinaryReader reader = new BinaryReader(stream, Encoding.UTF8);
+
+			if (reader.ReadString() != "TILEMAP")
+				throw new InvalidDataException();
+			if (reader.ReadInt32() != 1)
+				throw new InvalidDataException();
+			if (reader.ReadInt32() != 0)
+				throw new InvalidDataException();
+
+			int width = reader.ReadInt32();
+			int height = reader.ReadInt32();
+
+			var map = new TileMap(width, height);
+			for (int x = 0; x < map.Width; x++)
+			{
+				for (int y = 0; y < map.Height; y++)
+				{
+					var tile = map.tiles[x, y];
+					for (int layer = 0; layer < TileMap.LayerCount; layer++)
+					{
+						tile[layer] = reader.ReadInt32();
+					}
+					tile.Script = reader.ReadString();
+				}
+			}
+
+			return map;
+		}
+
+		#endregion
+
+		public void Draw(IGraphics graphics)
 		{
 			if (this.PreRenderMap != null)
-				this.PreRenderMap(this, EventArgs.Empty);
+				this.PreRenderMap(this, new RenderMapEventArgs(graphics));
 			for (int layer = 0; layer < TileMap.LayerCount; layer++)
 			{
 				if (this.PreRenderLayer != null)
-					this.PreRenderLayer(this, new RenderLayerEventArgs(layer));
-				for (int x = rect.Left; x < rect.Right; x++)
+					this.PreRenderLayer(this, new RenderLayerEventArgs(graphics, layer));
+				for (int x = 0; x < this.Width; x++)
 				{
-					for (int y = rect.Top; y < rect.Bottom; y++)
+					for (int y = 0; y < this.Height; y++)
 					{
 						if (this[x, y][layer] <= 0)
 							continue;
 						if (this.RenderTile != null)
-							this.RenderTile(this, new RenderTileEventArgs(x - rect.Left, y - rect.Top, this[x, y][layer]));
+							this.RenderTile(this, new RenderTileEventArgs(graphics, x, y, this[x, y][layer]));
 					}
 				}
 				if (this.PostRenderLayer != null)
-					this.PostRenderLayer(this, new RenderLayerEventArgs(layer));
+					this.PostRenderLayer(this, new RenderLayerEventArgs(graphics, layer));
 			}
 			if (this.PostRenderMap != null)
-				this.PostRenderMap(this, EventArgs.Empty);
+				this.PostRenderMap(this, new RenderMapEventArgs(graphics));
 		}
 
 		public Tile this[int x, int y]
@@ -73,6 +134,11 @@ namespace NextMMO
 	{
 		private readonly int[] sprites = new int[TileMap.LayerCount];
 
+		public Tile()
+		{
+			this.Script = "";
+		}
+
 		public int this[int layer]
 		{
 			get { return this.sprites[layer]; }
@@ -81,24 +147,40 @@ namespace NextMMO
 		public string Script { get; set; }
 	}
 
+	public sealed class RenderMapEventArgs : EventArgs
+	{
+		public RenderMapEventArgs(IGraphics graphics)
+		{
+			this.Graphics = graphics;
+		}
+
+		public IGraphics Graphics { get; private set; }
+	}
+
 	public sealed class RenderLayerEventArgs : EventArgs
 	{
-		public RenderLayerEventArgs(int layer)
+		public RenderLayerEventArgs(IGraphics graphics, int layer)
 		{
+			this.Graphics = graphics;
 			this.Layer = layer;
 		}
+
+		public IGraphics Graphics { get; private set; }
 
 		public int Layer { get; private set; }
 	}
 
 	public sealed class RenderTileEventArgs : EventArgs
 	{
-		public RenderTileEventArgs(int x, int y, int id)
+		public RenderTileEventArgs(IGraphics graphics, int x, int y, int id)
 		{
+			this.Graphics = graphics;
 			this.X = x;
 			this.Y = y;
 			this.ID = id;
 		}
+
+		public IGraphics Graphics { get; private set; }
 
 		public int X { get; private set; }
 

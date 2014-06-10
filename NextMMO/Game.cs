@@ -16,6 +16,8 @@ namespace NextMMO
 {
 	public partial class Game : GameWindow, IGameServices, INetworkService
 	{
+		private readonly Random random = new Random();
+
 		bool isConnected = false;
 		ResourceCollection resources;
 		GDIGraphics graphicsWrapper;
@@ -32,7 +34,6 @@ namespace NextMMO
 		PlayerData playerData;
 
 		EffectManager effects;
-		Random random = new Random();
 
 		GameTime time = new GameTime();
 
@@ -66,34 +67,7 @@ namespace NextMMO
 			this.graphics = Graphics.FromImage(this.backBuffer);
 			this.graphicsWrapper = new GDIGraphics(this.graphics);
 
-			var map = new TileMap(20, 15);
-			for (int x = 0; x < map.Width; x++)
-			{
-				for (int y = 0; y < map.Height; y++)
-				{
-					if (y == 10)
-					{
-						if (x == 0)
-							map[x, y][0] = 33;
-						else if (x == 19)
-							map[x, y][0] = 35;
-						else
-							map[x, y][0] = 34;
-					}
-					else if (y > 10)
-					{
-						if (x == 0)
-							map[x, y][0] = 41;
-						else if (x == 19)
-							map[x, y][0] = 43;
-						else
-							map[x, y][0] = 42;
-					}
-				}
-			}
-
-			map[6, 11][1] = 10;
-			map[10, 11][1] = 10;
+			var map = this.resources.Maps["Simple"];
 
 			this.world = new World(this);
 			this.world.TileMap = map;
@@ -101,6 +75,7 @@ namespace NextMMO
 
 			this.player = new ControllablePlayer(this.world, 8, 11);
 			this.player.Sprite = new AnimatedSprite(this.resources.Characters[this.playerData.Sprite], new Point(16, 42));
+			this.world.Focus = this.player;
 			this.world.Entities.Add(this.player);
 
 			var config = new NetPeerConfiguration("mq32.de.NextMMO");
@@ -139,6 +114,39 @@ namespace NextMMO
 
 			this.debugMenu.Elements.Add(new Element("Spawn Effect", (s, ea) => { this.SpawnTestEffect(); }));
 			this.debugMenu.Elements.Add(new Element("Back", (s, ea) => { this.gui.NavigateBack(); }));
+		}
+
+		private static TileMap CreateSimpleMap()
+		{
+			var map = new TileMap(30, 25);
+			for (int x = 0; x < map.Width; x++)
+			{
+				for (int y = 0; y < map.Height; y++)
+				{
+					if (y == 10)
+					{
+						if (x == 0)
+							map[x, y][0] = 33;
+						else if (x == map.Width - 1)
+							map[x, y][0] = 35;
+						else
+							map[x, y][0] = 34;
+					}
+					else if (y > 10)
+					{
+						if (x == 0)
+							map[x, y][0] = 41;
+						else if (x == map.Width - 1)
+							map[x, y][0] = 43;
+						else
+							map[x, y][0] = 42;
+					}
+				}
+			}
+
+			map[6, 11][1] = 10;
+			map[10, 11][1] = 10;
+			return map;
 		}
 
 		private ListContainer CreateBaseContainer()

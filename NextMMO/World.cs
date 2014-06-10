@@ -12,6 +12,7 @@ namespace NextMMO
 		private readonly Queue<Action> debugDraws = new Queue<Action>();
 		private TileMap map;
 		private TileSet tileSet;
+		private float scrollX, scrollY;
 
 		public World(IGameServices services)
 			: base(services)
@@ -23,16 +24,39 @@ namespace NextMMO
 		{
 			// Clone entities into array to allow
 			// removal or addition of entities while updating.
-			foreach(var entity in this.entities.ToArray())
+			foreach (var entity in this.entities.ToArray())
 			{
 				entity.Update();
 			}
+
+			if (this.Focus != null)
+			{
+				float delta = 32.0f * 3.5f;
+				float fx = 32.0f * (float)this.Focus.X;
+				float fy = 32.0f * (float)this.Focus.Y;
+				float sw = 640;
+				float sh = 480;
+
+				// Horizontal scrolling
+				if (fx > sw + this.scrollX - delta)
+					this.scrollX = Math.Min(fx - sw + delta, 32 * this.map.Width - sw);
+				if (fx < this.scrollX + delta)
+					this.scrollX = Math.Max(fx - delta, 0);
+
+
+				// Vertical scrolling
+				if (fy > sh + this.scrollY - delta)
+					this.scrollY = Math.Min(fy - sh + delta, 32 * this.map.Height - sh);
+				if (fy < this.scrollY + delta)
+					this.scrollY = Math.Max(fy - delta, 0);
+			}
+
 		}
 
 		public void Draw()
 		{
-			this.TileMap.Draw(new Rectangle(0, 0, 20, 15));
-			while(this.debugDraws.Count > 0)
+			this.TileMap.Draw(this.Services.Graphics);
+			while (this.debugDraws.Count > 0)
 			{
 				this.debugDraws.Dequeue()();
 			}
@@ -56,9 +80,9 @@ namespace NextMMO
 			{
 				case 1:
 					this.entities.Sort((a, b) => Math.Sign(a.Y - b.Y));
-					foreach(var ent in this.entities)
+					foreach (var ent in this.entities)
 					{
-						ent.Draw(this.Services.Graphics);
+						ent.Draw(e.Graphics, this.scrollX, this.scrollY);
 					}
 					break;
 			}
@@ -73,7 +97,10 @@ namespace NextMMO
 
 		void map_RenderTile(object sender, RenderTileEventArgs e)
 		{
-			this.tileSet[e.ID].Draw(e.X, e.Y);
+			this.tileSet[e.ID].Draw(
+				e.Graphics,
+				(int)(32 * e.X - this.scrollX),
+				(int)(32 * e.Y - this.scrollY));
 		}
 
 		#endregion
@@ -85,7 +112,7 @@ namespace NextMMO
 			get { return this.map; }
 			set
 			{
-				if(this.map != null)
+				if (this.map != null)
 				{
 					this.map.RenderTile -= map_RenderTile;
 					this.map.PreRenderMap -= map_PreRenderMap;
@@ -108,5 +135,7 @@ namespace NextMMO
 		}
 
 		public Bitmap Background { get; set; }
+
+		public Entity Focus { get; set; }
 	}
 }

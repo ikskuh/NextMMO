@@ -12,6 +12,7 @@ namespace NextMMO
 		ResourceManager<TileSet> tileSetSource;
 		ResourceManager<AnimatedBitmap> characterSprites;
 		ResourceManager<Sound> soundSource;
+		ResourceManager<TileMap> mapSource;
 
 		public ResourceCollection(IGameServices services, string allRoot)
 			: base(services)
@@ -36,6 +37,11 @@ namespace NextMMO
 				(stream) => new Sound(stream),
 				null,
 				".ogg");
+			this.mapSource = new ResourceManager<TileMap>(
+				allRoot + "./Maps/",
+				(stream) => TileMap.Load(stream),
+				(stream, map) => map.Save(stream),
+				".map");
 		}
 
 		public ResourceManager<Bitmap> Bitmaps { get { return this.bitmapSource; } }
@@ -45,5 +51,7 @@ namespace NextMMO
 		public ResourceManager<Sound> Sounds { get { return this.soundSource; } }
 
 		public ResourceManager<TileSet> TileSets { get { return tileSetSource; } }
+
+		public ResourceManager<TileMap> Maps { get { return this.mapSource; } }
 	}
 }

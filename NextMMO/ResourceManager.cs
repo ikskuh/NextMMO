@@ -39,6 +39,8 @@ namespace NextMMO
 			{
 				throw new ArgumentOutOfRangeException("extensions", "extensions must have at least one entry");
 			}
+			if (!Directory.Exists(this.root))
+				Directory.CreateDirectory(this.root);
 		}
 
 		public void Save(string name, T resource)

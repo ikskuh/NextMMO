@@ -192,12 +192,12 @@ namespace NextMMO
 		/// </summary>
 		/// <param name="x">X-coordinate to draw the tile at.</param>
 		/// <param name="y">Y-coordinate to draw the tile at.</param>
-		public void Draw(int x, int y)
+		public void Draw(IGraphics g, int x, int y)
 		{
 			var texmap = this.tileSet.Services.Resources.Bitmaps[this.tileSet.Source];
-			this.tileSet.Services.Graphics.DrawImage(
+			g.DrawImage(
 				texmap,
-				new Rectangle(32 * x, 32 * y, 32, 32),
+				new Rectangle(x, y, 32, 32),
 				this.Source);
 		}
 
