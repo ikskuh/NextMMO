@@ -32,5 +32,10 @@ namespace NextMMO
 		/// Provides tile maps.
 		/// </summary>
 		ResourceManager<TileMap> Maps { get; }
+
+		/// <summary>
+		/// Provides entity templates.
+		/// </summary>
+		ResourceManager<EntityTemplate> Templates { get; }
 	}
 }

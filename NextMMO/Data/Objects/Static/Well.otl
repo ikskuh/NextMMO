@@ -1,4 +1,0 @@
-﻿Sprite: Animation; WaterFalls; 48; 48; 2; 8.0
-Collider: -48; -8; 96; 56
-
-Game:PlaySound("BitchSlap")

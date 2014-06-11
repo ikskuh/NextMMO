@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="AnimatedBitmap.cs" />
     <Compile Include="AnimatedSprite.cs" />
+    <Compile Include="RegisterOnlyResourceManager.cs" />
     <Compile Include="AnimationSource.cs" />
     <Compile Include="Collider.cs" />
     <Compile Include="ControllablePlayer.cs" />
@@ -136,7 +137,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="Data\Objects\Static\Well.otl">
+    <None Include="Data\StaticResources.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\Sounds\BitchSlap.ogg">
@@ -174,9 +175,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\Shaders\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Data\Images\004-CloudySky01.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

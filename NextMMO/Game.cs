@@ -43,7 +43,6 @@ namespace NextMMO
 		ListContainer characterMenu;
 
 		ScriptHost scriptHost;
-		ScriptInterface scriptInterface;
 
 		public Game()
 			: base(
@@ -63,8 +62,11 @@ namespace NextMMO
 			this.resources = new ResourceCollection(this, "./Data/");
 
 			this.scriptHost = new ScriptHost();
-			this.scriptInterface = new ScriptInterface(this);
-			this.scriptHost.Interface = this.scriptInterface;
+
+			this.scriptHost.RegisterInterface("Game", new GameScriptInterface(this));
+			this.scriptHost.RegisterInterface("Resource", new ResourceScriptInterface(this));
+
+			this.scriptHost.DoFile("./Data/StaticResources.lua");
 
 			this.playerData = new PlayerData();
 			this.playerData.Name = "Unnamed";
@@ -86,7 +88,7 @@ namespace NextMMO
 			this.world.Focus = this.player;
 			this.world.Entities.Add(this.player);
 
-			var thingy = this.resources.Templates["Static/Well"].Instantiate(this.world);
+			var thingy = this.resources.Templates["well-1"].Instantiate(this.world);
 			thingy.Teleport(8, 13);
 			this.world.Entities.Add(thingy);
 

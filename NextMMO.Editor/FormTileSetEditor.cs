@@ -15,8 +15,8 @@ namespace NextMMO
 		Bitmap backBuffer;
 		Graphics graphics;
 		TileSet tileSet;
-		ResourceManager<Bitmap> bitmapSource;
-		ResourceManager<TileSet> tileSetSource;
+		FileSystemResourceManager<Bitmap> bitmapSource;
+		FileSystemResourceManager<TileSet> tileSetSource;
 
 		public FormTileSetEditor()
 		{
@@ -25,12 +25,12 @@ namespace NextMMO
 			this.ClientSize = new Size(256, this.toolStrip1.Height + 704);
 			this.panelTileSet.Top = this.toolStrip1.Height;
 
-			this.bitmapSource = new ResourceManager<Bitmap>(
+			this.bitmapSource = new FileSystemResourceManager<Bitmap>(
 				"./Data/Images/", 
 				(stream) => (Bitmap)Image.FromStream(stream, false, true),
 				null, 
 				".png", ".bmp", ".jpg");
-			this.tileSetSource = new ResourceManager<TileSet>(
+			this.tileSetSource = new FileSystemResourceManager<TileSet>(
 				"./Data/TileSets/", 
 				(stream) => TileSet.Load(this, stream), 
 				(stream, resource) => resource.Save(stream),

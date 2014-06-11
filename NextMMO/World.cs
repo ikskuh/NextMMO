@@ -87,7 +87,7 @@ namespace NextMMO
 		/// Creates a delegate that can check for collisions at the given position.
 		/// </summary>
 		/// <returns>Collision checking delegate.</returns>
-		public EnvironmentCheckDelegate BuildEnvironment(double x, double y)
+		public EnvironmentCheckDelegate BuildEnvironment(double x, double y, params Entity[] passables)
 		{
 			int cx = (int)(x / 32.0 + 0.5);
 			int cy = (int)(y / 32.0 + 0.5);
@@ -115,8 +115,11 @@ namespace NextMMO
 				}
 			}
 
+			HashSet<Entity> ignorantSet = new HashSet<Entity>(passables);
 			foreach (var entity in this.Entities)
 			{
+				if (ignorantSet.Contains(entity))
+					continue; // Ignore all ignorants.
 				foreach (var collider in entity.GetColliders())
 				{
 					collider.Translate(32 * entity.X + 16, 32 * entity.Y + 16);

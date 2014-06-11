@@ -16,16 +16,14 @@ namespace NextMMO
 			this.lua.DoString(script, "ExternalScript");
 		}
 
-		public IScriptInterface Interface
+		public void DoFile(string fileName)
 		{
-			get
-			{
-				return this.lua[ScriptInterfaceVariable] as IScriptInterface;
-			}
-			set
-			{
-				this.lua[ScriptInterfaceVariable] = value;
-			}
+			this.lua.DoFile(fileName);
+		}
+
+		public void RegisterInterface(string name, object iface)
+		{
+			this.lua[name] = iface;
 		}
 	}
 }

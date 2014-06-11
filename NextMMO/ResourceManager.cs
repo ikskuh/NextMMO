@@ -10,9 +10,55 @@ namespace NextMMO
 	/// <summary>
 	/// Provides loading and caching of resources.
 	/// </summary>
-	public sealed class ResourceManager<T>
+	public abstract class ResourceManager<T>
 	{
 		private readonly Dictionary<string, T> resources = new Dictionary<string,T>();
+
+		protected ResourceManager()
+		{
+
+		}
+
+		protected abstract T Load(string name);
+
+		/// <summary>
+		/// Registers an already loaded resource.
+		/// </summary>
+		/// <param name="name">Name of the resource.</param>
+		/// <param name="value">Value of the resource.</param>
+		public void Register(string name, T value)
+		{
+			if (this.resources.ContainsKey(name))
+				throw new InvalidOperationException("The resource " + name + " already exists!");
+			this.resources.Add(name, value);
+		}
+
+		/// <summary>
+		/// Loads the resource with the given name.
+		/// </summary>
+		/// <param name="name">Name of the resource.</param>
+		/// <returns>Loaded resource</returns>
+		public T this[string name]
+		{
+			get
+			{
+				lock (this.resources)
+				{
+					if (this.resources.ContainsKey(name))
+						return this.resources[name];
+
+					var resource = this.Load(name);
+
+					this.resources.Add(name, resource);
+
+					return resource;
+				}
+			}
+		}
+	}
+
+	public sealed class FileSystemResourceManager<T> : ResourceManager<T>
+	{
 		private readonly ResourceLoaderDelegate<T> loader;
 		private readonly ResourceSaverDelegate<T> saver;
 		private readonly string root;
@@ -25,7 +71,7 @@ namespace NextMMO
 		/// <param name="root">Root directory.</param>
 		/// <param name="loader">Loader delegate to load the resource.</param>
 		/// <param name="extensions">Valid file extensions.</param>
-		public ResourceManager(string root, ResourceLoaderDelegate<T> loader, ResourceSaverDelegate<T> saver, params string[] extensions)
+		public FileSystemResourceManager(string root, ResourceLoaderDelegate<T> loader, ResourceSaverDelegate<T> saver, params string[] extensions)
 		{
 			this.root = root;
 			this.loader = loader;
@@ -55,43 +101,19 @@ namespace NextMMO
 			}
 		}
 
-		/// <summary>
-		/// Loads the resource with the given name.
-		/// </summary>
-		/// <param name="name">Name of the resource.</param>
-		/// <returns>Loaded resource</returns>
-		public T this[string name]
+		protected override T Load(string name)
 		{
-			get
+			foreach (var ext in this.extensions)
 			{
-				lock (this.resources)
+				var fileName = this.root + "/" + name + ext;
+				if (!File.Exists(fileName))
+					continue;
+				using (var stream = File.Open(fileName, FileMode.Open))
 				{
-					if (this.resources.ContainsKey(name))
-						return this.resources[name];
-
-					T resource = default(T);
-					bool loaded = false;
-					foreach (var ext in this.extensions)
-					{
-						var fileName = this.root + "/" + name + ext;
-						if (!File.Exists(fileName))
-							continue;
-						using (var stream = File.Open(fileName, FileMode.Open))
-						{
-							resource = this.loader(stream);
-						}
-						loaded = true;
-						break;
-					}
-
-					if (!loaded)
-						throw new FileNotFoundException(name);
-
-					this.resources.Add(name, resource);
-
-					return resource;
+					return this.loader(stream);
 				}
 			}
+			throw new FileNotFoundException(name);
 		}
 	}
 }

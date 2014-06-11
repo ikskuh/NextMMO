@@ -82,7 +82,7 @@ namespace NextMMO
 		/// <returns>true if the teleportation succeeded.</returns>
 		public bool Teleport(double x, double y)
 		{
-			var testCollision = this.world.BuildEnvironment(32 * this.x, 32 * this.y);
+			var testCollision = this.world.BuildEnvironment(32 * this.x, 32 * this.y, this);
 
 			if (testCollision((int)(32 * x + 16), (int)(32 * y + 16), this.Size) != null)
 				return false;
@@ -100,7 +100,7 @@ namespace NextMMO
 		/// <param name="deltaY">Y delta to move.</param>
 		public void Translate(double deltaX, double deltaY)
 		{
-			var testCollision = this.world.BuildEnvironment(32 * this.x, 32 * this.y);
+			var testCollision = this.world.BuildEnvironment(32 * this.x, 32 * this.y, this);
 
 			var newX = this.x + deltaX;
 			var newY = this.y + deltaY;

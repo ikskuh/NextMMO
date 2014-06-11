@@ -18,6 +18,8 @@ namespace NextMMO
 
 		protected abstract void OnDraw(IGraphics g, int x, int y);
 
+		public abstract Sprite Clone();
+
 		public Point Offset { get; set; }
 	}
 }

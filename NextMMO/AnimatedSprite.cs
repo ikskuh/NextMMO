@@ -31,6 +31,16 @@ namespace NextMMO
 				(int)(AnimationSource.Time * this.Speed));
 		}
 
+		public override Sprite Clone()
+		{
+			return new AnimatedSprite(this.Bitmap)
+			{
+				Animation = this.Animation,
+				Offset = this.Offset,
+				Speed = this.Speed,
+			};
+		}
+
 		public AnimatedBitmap Bitmap { get; set; }
 
 		public int Animation { get; set; }

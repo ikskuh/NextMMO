@@ -19,41 +19,33 @@ namespace NextMMO
 		public ResourceCollection(IGameServices services, string allRoot)
 			: base(services)
 		{
-			this.bitmapSource = new ResourceManager<Bitmap>(
+			this.bitmapSource = new FileSystemResourceManager<Bitmap>(
 				allRoot + "./Images/",
 				(stream) => (Bitmap)Image.FromStream(stream, false, true),
 				null,
 				".png", ".bmp", ".jpg");
-			this.tileSetSource = new ResourceManager<TileSet>(
+			this.tileSetSource = new FileSystemResourceManager<TileSet>(
 				allRoot + "./TileSets/",
 				(stream) => TileSet.Load(this.Services, stream),
 				(stream, resource) => resource.Save(stream),
 				".tset");
-			this.characterSprites = new ResourceManager<AnimatedBitmap>(
+			this.characterSprites = new FileSystemResourceManager<AnimatedBitmap>(
 				allRoot + "./Images/Characters/",
 				(stream) => new AnimatedBitmap(new Bitmap(stream), 4, 4),
 				null,
 				".png", ".bmp", ".jpg");
-			this.animations = new ResourceManager<AnimatedBitmap>(
-				allRoot + "./Images/",
-				(stream) => new AnimatedBitmap(new Bitmap(stream), 4, 4),
-				null,
-				".png", ".bmp", ".jpg");
-			this.soundSource = new ResourceManager<Sound>(
+			this.animations = new RegisterOnlyResourceManager<AnimatedBitmap>();
+			this.soundSource = new FileSystemResourceManager<Sound>(
 				allRoot + "./Sounds/",
 				(stream) => new Sound(stream),
 				null,
 				".ogg");
-			this.mapSource = new ResourceManager<TileMap>(
+			this.mapSource = new FileSystemResourceManager<TileMap>(
 				allRoot + "./Maps/",
 				(stream) => TileMap.Load(stream),
 				(stream, map) => map.Save(stream),
 				".map");
-			this.templates = new ResourceManager<EntityTemplate>(
-				allRoot + "./Objects/",
-				(stream) => new EntityTemplate(this.Services, stream),
-				(stream, template) => template.Save(stream),
-				".otl");
+			this.templates = new RegisterOnlyResourceManager<EntityTemplate>();
 		}
 
 		public ResourceManager<Bitmap> Bitmaps { get { return this.bitmapSource; } }
