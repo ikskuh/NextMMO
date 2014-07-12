@@ -1,0 +1,62 @@
+
+NextGen:
+	2D-MMA (Massive Multiplayer Adventure)
+
+Features:
+	Massive Multiplayer
+		Multiple Servers
+			User Created "Story Servers"
+				Host custom maps with quests and maps
+				Synchronize player positions
+				Can create groups
+					Fixed groups:
+						Admin
+							Full Access
+						Moderator
+							Can kick/temp-ban players
+						Player
+							Can play on the built map
+						Editor
+							Can modify the map(s)
+						Player+Editor
+							Can swap between both user groups
+							Only one group can be active
+			Central "User Server"
+				Hosts user data
+					Only authenticated servers can modify the users inventory
+				Hosts global items
+				Does authentication
+				Hosts one "hub" world where players get teleported when the server they are currently located gets offline
+				Provides global chat/messaging system
+				
+	Users
+		Unique ID
+		Inventory/Rucksack
+		Phase manipulator device (PMD)
+			Server change
+			Address Book
+				Users
+				Servers
+			Communication
+				Chat over server bounds
+				Mail-System
+		Name
+		Sprite
+	
+	2D Graphics
+		45° Isometric View
+		Sprite Players
+		
+	Maps
+		Unlimited map size
+		Tile based
+		Entities/Objects do not align with grid
+		Objects are scriptable
+		Have pathfinding unit
+		Entities can be scripted
+			Use of JavaScript?
+			Use of custom "RPG-Maker" language?
+	
+	Map Editor
+		Can only be used by "Editor" group
+		Allows realtime map editing

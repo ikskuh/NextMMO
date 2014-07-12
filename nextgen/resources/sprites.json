@@ -1,0 +1,25 @@
+{
+	"frames":
+	{
+		"explo_1.png":
+		{
+			"frame": {"x":0,"y":0,"w":95,"h":95},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":95,"h":95},
+			"sourceSize": {"w":95,"h":95}
+		},
+		"explo_2.png":
+		{
+			"frame": {"x":95,"y":0,"w":95,"h":95},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {"x":0,"y":0,"w":95,"h":95},
+			"sourceSize": {"w":95,"h":95}
+		}
+	},
+	"meta":
+	{
+		"image": "images/explo+13.png"
+	}
+}
