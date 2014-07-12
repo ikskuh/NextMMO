@@ -3,12 +3,9 @@ var game = { };
 function initializeGame() {
 	game.socket = io('http://localhost');
 	game.listener = new window.keypress.Listener();
-	game.stage = new PIXI.Stage(0x000022);
-	game.levelStage = new PIXI.DisplayObjectContainer();
-	game.stage.addChild(game.levelStage);
 	game.resources = { };
 	game.resources.emptyTileTexture = PIXI.Texture.fromImage("textures/empty.png");
-	game.user = { name: undefined }
+	game.user = {  }
 	game.proxyPlayers = { }
 	
 	game.loadLevel = function (level) {
@@ -31,8 +28,6 @@ function initializeGame() {
 	initializePIXI();
 	initializePivot();
 	intializeNetwork();
-
-	requestAnimFrame( animate );
 }
 
 function login(name, password) {
@@ -43,7 +38,7 @@ function login(name, password) {
 	} else {
 		password = password || "";
 	}
-
+	
 	game.user.name = name;
 	game.socket.emit('login', {
 		name: name,
@@ -53,14 +48,37 @@ function login(name, password) {
 
 function initializePIXI() {
 	// create a renderer instance.
-	game.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, null, true);
-	game.renderer.view.className = 'pixiView';
-	game.renderer.view.id = 'renderer';
-	game.renderer.view.oncontextmenu = function () { return false; }
+	game.graphics = { }
+	game.graphics.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, null, true);
+	game.graphics.renderer.view.className = 'pixiView';
+	game.graphics.renderer.view.id = 'renderer';
+	game.graphics.renderer.view.oncontextmenu = function () { return false; }
 	window.onresize = function(event) {
-		game.renderer.resize(window.innerWidth, window.innerHeight);
+		game.graphics.renderer.resize(window.innerWidth, window.innerHeight);
 	};
-	document.body.appendChild(game.renderer.view);
+	document.body.appendChild(game.graphics.renderer.view);
+	
+	game.graphics.stage = new PIXI.Stage(0x000022);
+	game.graphics.levelStage = new PIXI.DisplayObjectContainer();
+	game.graphics.stage.addChild(game.graphics.levelStage);
+	
+	// create an array of assets to load
+	//var assetsToLoader = [ "sprites.json", "characters/default.json" ];
+	//
+	//// create a new loader
+	//game.graphics.loader = new PIXI.AssetLoader(assetsToLoader);
+	//
+	//// use callback
+	//game.graphics.loader.onComplete = function onAssetsLoaded()
+	//{
+	//	// start animating
+	//	requestAnimFrame( animate );
+	//}
+	
+	//begin load
+	//game.graphics.loader.load();
+	
+	requestAnimFrame( animate );
 }
 
 function initializePivot() {
@@ -72,14 +90,14 @@ function initializePivot() {
 		lastY: 0,
 		invert: true
 	};
-	game.renderer.view.onmousedown = function (e) {
+	game.graphics.renderer.view.onmousedown = function (e) {
 		if(e.button === 2) {
 			game.pivot.move = true;
 			game.pivot.lastX = e.screenX;
 			game.pivot.lastY = e.screenY;
 		}
 	};
-	game.renderer.view.onmousemove = function (e) {
+	game.graphics.renderer.view.onmousemove = function (e) {
 		if(game.pivot.move) {
 			var sign = 1
 			if(game.pivot.invert)
@@ -92,12 +110,12 @@ function initializePivot() {
 			game.pivot.lastY = e.screenY;
 		}
 	};
-	game.renderer.view.onmouseup = function (e) {
+	game.graphics.renderer.view.onmouseup = function (e) {
 		if(e.button === 2) {
 			game.pivot.move = false;
 		}
 	};
-	game.renderer.view.onmouseleave = function (e) {
+	game.graphics.renderer.view.onmouseleave = function (e) {
 		game.pivot.move = false;
 	};
 }
@@ -173,7 +191,7 @@ function prepareLevel(level)  {
 	level = level || Level.create(11, 11);
 	
 	level.stage = new PIXI.DisplayObjectContainer();
-	game.levelStage.addChild(level.stage);
+	game.graphics.levelStage.addChild(level.stage);
 	
 	if(level.sprites === undefined) {
 		level.sprites = { };
@@ -235,8 +253,9 @@ function prepareLevel(level)  {
 							e.target.tint = 0xFFFFFF;
 						};
 						sprite.click = function (e) {
-							if(!game.pivot.move) {
-								game.player.target = level.transformBack(e.global.x, e.global.y, e.target.tile.height);;
+							if(!game.pivot.move && game.player != undefined) {
+								game.player.target = level.transformBack(e.global.x, e.global.y, e.target.tile.height);
+								//game.player.target = e.target.tile;
 							}
 						};
 					}
@@ -262,16 +281,16 @@ function prepareLevel(level)  {
 	
 	level.transform = function (x, y, h) {
 		var pos = { };
-		pos.x = 0.5 * game.renderer.width + game.pivot.x + 48 * x + 48 * y;
-		pos.y = 0.5 * game.renderer.height + game.pivot.y + 24 * x - 24 * y - h;
+		pos.x = 0.5 * game.graphics.renderer.width + game.pivot.x + 48 * x + 48 * y;
+		pos.y = 0.5 * game.graphics.renderer.height + game.pivot.y + 24 * x - 24 * y - h;
 		return pos;
 	}
 	
 	level.transformBack = function(x, y, h) {
 		var pos = { };
 		
-		x -= 0.5 * game.renderer.width + game.pivot.x;
-		y -= 0.5 * game.renderer.height + game.pivot.y - h;
+		x -= 0.5 * game.graphics.renderer.width + game.pivot.x;
+		y -= 0.5 * game.graphics.renderer.height + game.pivot.y - h;
 		
 		x *= 1.0 / 48.0;
 		y *= 1.0 / 24.0;
@@ -286,7 +305,7 @@ function prepareLevel(level)  {
 		for(var key in level.sprites) {
 			level.stage.removeChild(level.sprites[key]);
 		}
-		game.levelStage.removeChild(level.stage);
+		game.graphics.levelStage.removeChild(level.stage);
 		level.stage = null;
 	}
 	
@@ -307,12 +326,36 @@ function prepareLevel(level)  {
 	return level;
 }
 
+function loadCharacterSpriteSheet(name) {
+	var directions = [ "n", "ne", "nw", "e", "w", "s", "sw", "se" ];
+	var spriteSheet = { walk: { }, idle: { }}
+	for(var animation in spriteSheet) {
+		for(var i = 0; i < directions.length; i++) {
+			var dir = directions[i];
+			var sheet = spriteSheet[animation];
+			
+			var sprites = []
+			for(var j = 0; j < 20; j++) {
+				var fname = "characters/" +name+ "/" + animation +"/" + dir + "_" + (j+1) + ".png";
+				sprites.push(new PIXI.Texture.fromImage(fname));
+			}
+			sheet[dir] = sprites;
+		}
+	}
+	return spriteSheet;
+}
+
 function createBasePlayer() {
+
+	var spriteSheet = loadCharacterSpriteSheet("default");
+
 	var player = {}
-	player.sprite = new PIXI.Sprite.fromImage("images/player.png");
+	player.sprite = new PIXI.MovieClip(spriteSheet["walk"]["s"]);
+	player.sprite.animationSpeed = 0.8;
+	player.sprite.play();
 	player.sprite.anchor.x = 0.5;
-	player.sprite.anchor.y = 0.9;
-	game.stage.addChild(player.sprite);
+	player.sprite.anchor.y = 0.7;
+	game.graphics.stage.addChild(player.sprite);
 	
 	player.x = 0.0;
 	player.y = 0.0;
@@ -325,12 +368,19 @@ function createBasePlayer() {
 		}
 	}
 	player.baseDestroy = function () {
-		game.stage.removeChild(player.sprite);
+		game.graphics.stage.removeChild(player.sprite);
 	}
+	player.lastDirection = "s";
 	
 	player.move = function () {
+		
+		// Adjust animation here!
+	
 		if(player.target == null)
+		{
+			player.sprite.textures = spriteSheet["idle"][player.lastDirection];
 			return 0.0;
+		}
 		var deltaX = player.target.x - player.x;
 		var deltaY = player.target.y - player.y;
 		
@@ -343,10 +393,57 @@ function createBasePlayer() {
 		{
 			player.x += deltaX;
 			player.y += deltaY;
+			
+			var abs = Math.abs;
+			var cos = function (f) { return Math.tan(f * 0.0174532925); } 
+			if(deltaX == 0.0) deltaX = 0.001;
+			
+			var dy = deltaY / abs(deltaX);
+			if(deltaX < 0) {
+				if(dy < cos(-22.5 * 3)) {
+					console.log("1");
+					player.lastDirection = "sw";
+				} else if(dy < cos(-22.5)) {
+					console.log("2");
+					player.lastDirection = "w";
+				} else if(dy < cos(22.5)) {
+					console.log("3");
+					player.lastDirection = "nw";
+				} else if(dy < cos(22.5 * 3)) {
+					console.log("4");
+					player.lastDirection = "n";
+				} else {
+					console.log("5");
+					player.lastDirection = "ne";
+				}
+			} else {
+				if(dy < cos(-22.5 * 3)) {
+					console.log("6");
+					player.lastDirection = "sw";
+				} else if(dy < cos(-22.5)) {
+					console.log("7");
+					player.lastDirection = "s";
+				} else if(dy < cos(22.5)) {
+					console.log("8");
+					player.lastDirection = "se";
+				} else if(dy < cos(22.5 * 3)) {
+					console.log("9");
+					player.lastDirection = "e";
+				} else {
+					console.log("10");
+					player.lastDirection = "ne";
+				}
+			}
+			
+			
+			
+			player.sprite.textures = spriteSheet["walk"][player.lastDirection];
+			
 			return len;
 		}
 		else
 		{
+			player.sprite.textures = spriteSheet["idle"][player.lastDirection];
 			return 0.0;
 		}
 	}
@@ -406,7 +503,7 @@ function animate() {
 	}
 
 	// render the stage   
-	game.renderer.render(game.stage);
+	game.graphics.renderer.render(game.graphics.stage);
 }
 
 

@@ -73,7 +73,7 @@ function handler (req, res) {
 	fs.readFile(__dirname + "/../" + path,
 	function (err, data) {
 		if (err) {
-			res.writeHead(500);
+			res.writeHead(404);
 			return res.end('Error loading ' + path);
 		}
 		res.writeHead(200);

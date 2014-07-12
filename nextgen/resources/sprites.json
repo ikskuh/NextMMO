@@ -1,7 +1,7 @@
 {
 	"frames":
 	{
-		"explo_1.png":
+		"xyz/explo_1.png":
 		{
 			"frame": {"x":0,"y":0,"w":95,"h":95},
 			"rotated": false,
