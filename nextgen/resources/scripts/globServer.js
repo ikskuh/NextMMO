@@ -14,6 +14,10 @@ io.on('connection', function (socket) {
 	socket.on('login', function (data) {
 		console.log(data);
 		
-		socket.emit('login-response', { name: data.name, success: true });
+		if(data.name == "noname") {
+			socket.emit('login-response', { name: data.name, success: false, reason: "Invalid user name" });
+		} else {
+			socket.emit('login-response', { name: data.name, success: true });
+		}
 	});
 });

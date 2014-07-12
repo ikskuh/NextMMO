@@ -19,21 +19,29 @@ function prepareLevel(level) {
 		level.at(x,y).height = height;
 		level.at(x,y).textureName = tex;
 	}
-	for(var y = 0; y <= 5; y++)
-	{
-		setTile(5, y, -4, "dirt_pave.png");
-	}
-	setTile(4, 4, -4, "dirt_pave.png");
-	setTile(4, 5, -4, "dirt_pave.png");
-	setTile(4, 6, -4, "dirt_pave.png");
-	setTile(5, 6, -4, "dirt_pave.png");
-	setTile(6, 6, -4, "dirt_pave.png");
-	setTile(6, 5, -4, "dirt_pave.png");
-	setTile(6, 4, -4, "dirt_pave.png");
 	
-	for(var x = 0; x < level.width; x++)
+	for(var x = level.minX; x <= level.maxX; x++) {
+		for(var y = level.minY; y <= level.maxY; y++) {
+			setTile(x, y, 0, "dirt_grass.png");
+		}
+	}
+	
+	for(var y = level.minY; y <= 0; y++)
 	{
-		setTile(x, level.height - 1, 32, "dirt_gravel.png");
+		setTile(0, y, -4, "dirt_pave.png");	
+	}
+	
+	setTile(-1, -1, -4, "dirt_pave.png");
+	setTile(-1, 0, -4, "dirt_pave.png");
+	setTile(-1, 1, -4, "dirt_pave.png");
+	setTile(0, 1, -4, "dirt_pave.png");
+	setTile(1, 1, -4, "dirt_pave.png");
+	setTile(1, 0, -4, "dirt_pave.png");
+	setTile(1, -1, -4, "dirt_pave.png");
+	
+	for(var x = level.minX; x <= level.maxX; x++)
+	{
+		setTile(x, level.maxY, 32, "dirt_gravel.png");
 	}
 }
 
@@ -41,7 +49,7 @@ var level = null;
 fs.readFile(__dirname + "/resources/levels/main.json",
 	function (err, data) {
 		if (err) {
-			level = Level.create(11, 11);
+			level = Level.create(-5, 5, -5, 5);
 		} else {
 			level = Level.load(data);
 		}

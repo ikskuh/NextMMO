@@ -10,10 +10,12 @@ Level.initialize = function (level) {
 	};
 }
 
-Level.create = function (width, height) {
+Level.create = function (minX, maxX, minY, maxY) {
 	var level = { };
-	level.width = width;
-	level.height = height;
+	level.minX = minX;
+	level.minY = minY;
+	level.maxX = maxX;
+	level.maxY = maxY;
 	level.data = { };
 	
 	Level.initialize(level);

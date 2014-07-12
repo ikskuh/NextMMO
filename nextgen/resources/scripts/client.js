@@ -36,6 +36,14 @@ function initializeGame() {
 }
 
 function login(name, password) {
+
+	if(name === undefined) {
+		name = document.getElementById("username").value;
+		password = document.getElementById("username").value;
+	} else {
+		password = password || "";
+	}
+
 	game.user.name = name;
 	game.socket.emit('login', {
 		name: name,
@@ -45,8 +53,10 @@ function login(name, password) {
 
 function initializePIXI() {
 	// create a renderer instance.
-	game.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight);
+	game.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, null, true);
 	game.renderer.view.className = 'pixiView';
+	game.renderer.view.id = 'renderer';
+	game.renderer.view.oncontextmenu = function () { return false; }
 	window.onresize = function(event) {
 		game.renderer.resize(window.innerWidth, window.innerHeight);
 	};
@@ -54,15 +64,22 @@ function initializePIXI() {
 }
 
 function initializePivot() {
-	game.pivot = { x: 64, y: 0.5 * game.renderer.height, move:false, lastX: 0, lastY: 0, invert: true };
-	window.onmousedown = function (e) {
+	game.pivot = {
+		x: 0,
+		y: 0, 
+		move: false,
+		lastX: 0,
+		lastY: 0,
+		invert: true
+	};
+	game.renderer.view.onmousedown = function (e) {
 		if(e.button === 2) {
 			game.pivot.move = true;
 			game.pivot.lastX = e.screenX;
 			game.pivot.lastY = e.screenY;
 		}
 	};
-	window.onmousemove = function (e) {
+	game.renderer.view.onmousemove = function (e) {
 		if(game.pivot.move) {
 			var sign = 1
 			if(game.pivot.invert)
@@ -75,12 +92,12 @@ function initializePivot() {
 			game.pivot.lastY = e.screenY;
 		}
 	};
-	window.onmouseup = function (e) {
+	game.renderer.view.onmouseup = function (e) {
 		if(e.button === 2) {
 			game.pivot.move = false;
 		}
 	};
-	window.onmouseleave = function (e) {
+	game.renderer.view.onmouseleave = function (e) {
 		game.pivot.move = false;
 	};
 }
@@ -109,7 +126,12 @@ function intializeNetwork() {
 		}
 	});
 	game.socket.on('login-response', function (data) {
-		game.socket.emit('request-spawn', { });
+		if(data.success) {
+			game.socket.emit('request-spawn', { });
+			setLoginMenuVisible(false);
+		} else {
+			alert("Login failed: " + data.reason);
+		}
 	});
 	game.socket.on('update-player', function (data) {
 		if(data.id == game.user.name) return;
@@ -168,10 +190,8 @@ function prepareLevel(level)  {
 			return level.sprites[coord];
 		};
 		
-		for(var x = 0; x < level.width; x++)
-		{
-			for(var y = level.height - 1; y >= 0; y--)
-			{
+		for(var x = level.minX; x <= level.maxX; x++) {
+			for(var y = level.maxY; y >= level.minY; y--) {
 				function create() {
 				
 					var  sprite = level.spriteAt(x,y);
@@ -208,13 +228,6 @@ function prepareLevel(level)  {
 					}
 					
 					sprite.tile = tile; // Double linking
-					
-					// Set default texture
-					if(tile.textureName == "") {
-						tile.setTexture("dirt_grass.png");
-					} else {
-						tile.setTexture(tile.textureName);
-					}
 				}
 				create();
 			}
@@ -223,16 +236,16 @@ function prepareLevel(level)  {
 	
 	level.transform = function (x, y, h) {
 		var pos = { };
-		pos.x = game.pivot.x + 48 * x + 48 * y;
-		pos.y = game.pivot.y + 24 * x - 24 * y - h;
+		pos.x = 0.5 * game.renderer.width + game.pivot.x + 48 * x + 48 * y;
+		pos.y = 0.5 * game.renderer.height + game.pivot.y + 24 * x - 24 * y - h;
 		return pos;
 	}
 	
 	level.transformBack = function(x, y, h) {
 		var pos = { };
 		
-		x -= game.pivot.x;
-		y -= game.pivot.y - h;
+		x -= 0.5 * game.renderer.width + game.pivot.x;
+		y -= 0.5 * game.renderer.height + game.pivot.y - h;
 		
 		x *= 1.0 / 48.0;
 		y *= 1.0 / 24.0;
@@ -252,10 +265,8 @@ function prepareLevel(level)  {
 	}
 	
 	level.update = function () {
-		for(var x = 0; x < level.width; x++)
-		{
-			for(var y = 0; y < level.height; y++)
-			{
+		for(var x = level.minX; x <= level.maxX; x++) {
+			for(var y = level.minY; y <= level.maxY; y++) {
 				var tile = level.at(x,y);
 				var sprite = level.spriteAt(x,y);
 				sprite.position = level.transform(x, y, tile.height);
