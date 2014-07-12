@@ -181,10 +181,34 @@ function prepareLevel(level)  {
 			var coord = x + ";" + y;
 			if(level.sprites[coord] === undefined) {
 				var tile = level.at(x,y);
-				if(tile.textureName != "")
-					level.sprites[coord] = PIXI.Sprite.fromImage("textures/" + tile.textureName);
-				else
+				if(tile.textureName != "") {
+					var match = /.+\*\d+\.png/.exec(tile.textureName);
+					if(match != null) {
+						
+						match = /\d+\.png/g.exec(tile.textureName);
+						
+						var texName = tile.textureName.substring(0, tile.textureName.length - match[0].length - 1);
+						
+						var texCount = match[0].substring(0, match[0].length - 4);
+						
+						var frames = [];
+						for(var i = 1; i <= texCount; i++) {
+							var fileName = texName + "_" + i + ".png";
+							var tex = PIXI.Texture.fromImage("textures/" + fileName);
+							frames.push(tex);
+						}
+
+						level.sprites[coord] = new PIXI.MovieClip(frames);
+						level.sprites[coord].play();
+						level.sprites[coord].animationSpeed = 0.2;
+					} else {
+						level.sprites[coord] = PIXI.Sprite.fromImage("textures/" + tile.textureName);
+					}
+				}
+				else {
 					level.sprites[coord] = new PIXI.Sprite(game.resources.emptyTileTexture);
+				}
+				level.sprites[coord].alpha = tile.alpha || 1.0;
 				level.stage.addChild(level.sprites[coord]);
 			}
 			return level.sprites[coord];
@@ -194,27 +218,29 @@ function prepareLevel(level)  {
 			for(var y = level.maxY; y >= level.minY; y--) {
 				function create() {
 				
-					var  sprite = level.spriteAt(x,y);
-					
-					sprite.hitArea = new PIXI.Polygon(
-						48, 0,
-						96, 24,
-						48, 48,
-						0, 24);
-					sprite.interactive = true;
-					sprite.mouseover = function (e) {
-						e.target.tint = 0xAAAAAA;
-					};
-					sprite.mouseout = function (e) {
-						e.target.tint = 0xFFFFFF;
-					};
-					sprite.click = function (e) {
-						if(!game.pivot.move) {
-							game.player.target = level.transformBack(e.global.x, e.global.y, e.target.tile.height);;
-						}
-					};
-					
 					var tile = level.at(x,y);
+					var sprite = level.spriteAt(x,y);
+					
+					sprite.interactive = tile.isWalkable || false;
+					if(sprite.interactive) {
+						sprite.hitArea = new PIXI.Polygon(
+							48, 0,
+							96, 24,
+							48, 48,
+							0, 24);
+						sprite.mouseover = function (e) {
+							e.target.tint = 0xAAAAAA;
+						};
+						sprite.mouseout = function (e) {
+							e.target.tint = 0xFFFFFF;
+						};
+						sprite.click = function (e) {
+							if(!game.pivot.move) {
+								game.player.target = level.transformBack(e.global.x, e.global.y, e.target.tile.height);;
+							}
+						};
+					}
+					
 					tile.setTexture = function (fileName) {
 						fileName = fileName || "";
 						tile.textureName = fileName;

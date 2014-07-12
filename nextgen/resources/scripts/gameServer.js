@@ -15,18 +15,26 @@ global.on('connect', function(socket) {
 global.emit('delta', { });
 
 function prepareLevel(level) {
-	function setTile(x, y, height, tex) {
+	function setTile(x, y, height, tex, alpha, blocked) {
 		level.at(x,y).height = height;
 		level.at(x,y).textureName = tex;
+		level.at(x,y).alpha = alpha || 1.0;
+		level.at(x,y).isWalkable = !!!blocked;
 	}
 	
 	for(var x = level.minX; x <= level.maxX; x++) {
 		for(var y = level.minY; y <= level.maxY; y++) {
+			setTile(x, y, -10, "water/water*20.png", 0.3, true);
+		}
+	}
+	
+	for(var x = level.minX+2; x <= level.maxX-2; x++) {
+		for(var y = level.minY+2; y <= level.maxY-2; y++) {
 			setTile(x, y, 0, "dirt_grass.png");
 		}
 	}
 	
-	for(var y = level.minY; y <= 0; y++)
+	for(var y = level.minY+2; y <= 0; y++)
 	{
 		setTile(0, y, -4, "dirt_pave.png");	
 	}
@@ -39,9 +47,9 @@ function prepareLevel(level) {
 	setTile(1, 0, -4, "dirt_pave.png");
 	setTile(1, -1, -4, "dirt_pave.png");
 	
-	for(var x = level.minX; x <= level.maxX; x++)
+	for(var x = level.minX+2; x <= level.maxX-2; x++)
 	{
-		setTile(x, level.maxY, 32, "dirt_gravel.png");
+		setTile(x, level.maxY-2, 32, "dirt_gravel.png");
 	}
 }
 
@@ -49,7 +57,7 @@ var level = null;
 fs.readFile(__dirname + "/resources/levels/main.json",
 	function (err, data) {
 		if (err) {
-			level = Level.create(-5, 5, -5, 5);
+			level = Level.create(-7, 7, -7, 7);
 		} else {
 			level = Level.load(data);
 		}
