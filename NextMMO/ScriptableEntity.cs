@@ -18,18 +18,13 @@ namespace NextMMO
 
 		public override void Trigger(Entity other)
 		{
-			if(this.Script != null)
-			{
-				this.Script.Call(this, other);
-			}	
+			
 		}
 
 		public override IEnumerable<Collider> GetColliders()
 		{
 			return from c in colliders select new Collider.EntityCollider(this, c);
 		}
-
-		public NLua.LuaFunction Script { get; set; }
 
 		public List<Rectangle> Colliders { get { return colliders; } }
 	}

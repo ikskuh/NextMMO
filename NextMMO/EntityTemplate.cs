@@ -23,7 +23,7 @@ namespace NextMMO
 			var entity = new ScriptableEntity(world);
 
 			entity.Sprite = this.Sprite.Clone();
-			entity.Script = this.Script;
+			
 			foreach(var rect in this.rectangles)
 			{
 				entity.Colliders.Add(rect);
@@ -39,7 +39,9 @@ namespace NextMMO
 			get { return rectangles; }
 		}
 
-		public NLua.LuaFunction Script { get; set; }
+		public string ActionName { get; set; }
+
+		public string ActionParam { get; set; }
 	}
 
 }

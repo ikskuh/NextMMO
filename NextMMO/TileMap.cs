@@ -57,7 +57,6 @@ namespace NextMMO
 					{
 						writer.Write(tile[layer]);
 					}
-					//writer.Write(tile.Script);
 				}
 			}
 		}
@@ -90,6 +89,10 @@ namespace NextMMO
 							{
 								// Read deprecated "Script" string
 								reader.ReadString();
+							}
+							else if(minor == 1)
+							{
+								// Don't read any string here
 							}
 						}
 					}

@@ -160,11 +160,5 @@ namespace NextMMO
 		{
 			get { throw new NotImplementedException(); }
 		}
-
-
-		public IScriptHost ScriptHost
-		{
-			get { throw new NotImplementedException(); }
-		}
 	}
 }

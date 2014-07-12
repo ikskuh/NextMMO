@@ -105,7 +105,6 @@
     <Compile Include="IGameServices.cs" />
     <Compile Include="INetworkService.cs" />
     <Compile Include="IGameResources.cs" />
-    <Compile Include="IScriptHost.cs" />
     <Compile Include="Networking\ITransferable.cs" />
     <Compile Include="Networking\MessageDispatcher.cs" />
     <Compile Include="PlayerData.cs" />
@@ -116,14 +115,13 @@
     <Compile Include="ResourceManager.cs" />
     <Compile Include="Gui\Skin.cs" />
     <Compile Include="ScriptableEntity.cs" />
-    <Compile Include="ScriptHost.cs" />
-    <Compile Include="ScriptInterface.cs" />
     <Compile Include="Sound.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="TileMap.cs" />
     <Compile Include="ITileRenderer.cs" />
     <Compile Include="TileSet.cs" />
     <Compile Include="World.cs" />
+    <Compile Include="Xml.cs" />
     <EmbeddedResource Include="Game.resx">
       <DependentUpon>Game.cs</DependentUpon>
     </EmbeddedResource>
@@ -137,9 +135,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="Data\StaticResources.lua">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Data\Sounds\BitchSlap.ogg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -235,6 +230,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\Images\Characters\Butler.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\resources.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\TileSets\ref.txt">

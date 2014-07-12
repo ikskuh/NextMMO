@@ -42,8 +42,6 @@ namespace NextMMO
 		ListContainer debugMenu;
 		ListContainer characterMenu;
 
-		ScriptHost scriptHost;
-
 		public Game()
 			: base(
 			640, 480,
@@ -61,12 +59,7 @@ namespace NextMMO
 		{
 			this.resources = new ResourceCollection(this, "./Data/");
 
-			this.scriptHost = new ScriptHost();
-
-			this.scriptHost.RegisterInterface("Game", new GameScriptInterface(this));
-			this.scriptHost.RegisterInterface("Resource", new ResourceScriptInterface(this));
-
-			this.scriptHost.DoFile("./Data/StaticResources.lua");
+			this.resources.LoadFile("./Data/resources.xml");
 
 			this.playerData = new PlayerData();
 			this.playerData.Name = "Unnamed";
@@ -475,8 +468,6 @@ namespace NextMMO
 		GameTime IGameServices.Time { get { return this.time; } }
 
 		IGameResources IGameServices.Resources { get { return this.resources; } }
-
-		IScriptHost IGameServices.ScriptHost { get { return this.scriptHost; } }
 
 		#endregion
 
