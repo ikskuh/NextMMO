@@ -1,1 +1,16 @@
 o Scriptable Entities
+	o Actions
+		o Teleport
+		o Map Change
+		o Text Display
+		o Input Display
+			o Number
+			o Money
+			o Selection
+			o Text
+		o Sound Effect
+		o Play Effect
+			o Visual
+			o Sound
+o Map Editor
+o Map Change / Multi Map

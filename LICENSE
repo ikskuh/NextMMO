@@ -21,4 +21,5 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 =====================================================================
-The licence may change if the header of source files contains a different licence.
+The licence may change if the header of source files contains a different licence or another file
+named filename.LICENCE.txt is there.

@@ -7,7 +7,6 @@ function initializeGame() {
 	game.resources.emptyTileTexture = PIXI.Texture.fromImage("textures/empty.png");
 	game.user = { loggedIn: false }
 	game.proxyPlayers = { }
-	
 	game.loadLevel = function (level) {
 		if(game.level != null) {
 			game.level.destroy();
@@ -29,6 +28,65 @@ function initializeGame() {
 	initializePivot();
 	intializeNetwork();
 	initializeInput();
+	initializeAudio();
+	initializeMusic();
+}
+
+function initializeAudio() {
+	
+	var soundCache = { }
+	
+	game.audio = { }
+	game.audio.get = function (name, loop) {
+		if(soundCache[name] != undefined) {
+			return soundCache[name];
+		}
+			
+		soundCache[name] = currentMusic = new Howl({
+			urls: ["sounds/" + name + ".ogg", "sounds/" + name + ".mp3", "sounds/" + name + ".wav"],
+			autoplay: false,
+			loop: loop || false,
+			volume: 1.0,
+		});
+		
+		return soundCache[name];
+	}
+}
+
+function initializeMusic() {
+	
+	var currentMusic = null;
+	
+	game.music = {}
+	
+	game.music.play = function (song) {
+		
+		if(currentMusic != null) {
+			function fadeOld(music) {
+				music.fade(0.4, 0.0, 1000, function (e) {
+					music.stop();
+					music.unload();
+				});
+			}
+			fadeOld(currentMusic);
+		}
+		if(song != null) {
+			currentMusic = new Howl({
+				urls: ["music/" + song + ".ogg", "music/" + song + ".mp3", "music/" + song + ".wav"],
+				autoplay: false,
+				loop: true,
+				//buffer: true,
+				volume: 0.5,
+			});
+			
+			currentMusic.play();
+			currentMusic.fade(0.0, 0.4, 1000);
+		} else {
+			currentMusic = null;
+		}
+	}
+	
+	game.music.play("Crystal_Palace");
 }
 
 function initializeInput() {
@@ -193,4 +251,6 @@ function chatLog(msg, sender) {
 	var log = document.getElementById('chatlog');
 	log.innerText += "\n" + sender + ": " + msg;
 	log.scrollTop = log.scrollHeight;
+	
+	game.audio.get("chatclick").play();
 }
