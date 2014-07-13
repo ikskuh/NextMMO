@@ -1,0 +1,88 @@
+body {
+	background: #000022; /*url('../images/background-water.png');*/
+}
+.pixiView, .hud {
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	display: block;
+}
+.pixiView {
+	z-index: -100;
+}
+.hud {
+	pointer-events: none;
+	z-index: 100;
+}
+#login {
+	display: block;
+	position: fixed;
+	margin-left: -125px;
+	margin-top: -70px;
+	left: 50%;
+	top: 50%;
+	width: 250px;
+	height: 140px;
+	background-color: rgba(128,128,128, 0.7);
+	padding: 10px;
+}
+.text {
+	width: 90%;
+	margin: 2.5%;
+	padding: 1%;
+}
+.button {
+	width: 25%;
+	margin: 5%;
+	margin-top: 1%;
+	float: right;
+}
+
+#chatinput {
+	position: fixed;
+	left: 50%;
+	margin-left: -200px;
+	width: 400px;
+	bottom: 10px;
+}
+
+.closebutton {
+	background: url('../images/close_normal.png');
+	position: absolute;
+	width: 32px;
+	height: 32px;
+	top: 50%;
+	right: -32px;
+	margin-top: -16px;
+}
+.closebutton:hover {
+	background: url('../images/close_hover.png');
+}
+.closebutton:active {
+	background: url('../images/close_clicked.png');
+}
+
+#chatlog {
+	background-color: rgba(0,0,0, 0.4);
+	border-color: rgba(0,0,0, 0.6);
+	color: white;
+	
+	overflow-x: hidden;
+    overflow-y: visible;
+	
+	position: fixed;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 0px;
+	border-left-width: 0px;
+	border-style: solid;
+	padding: 5px;
+	bottom: 0px;
+	left: 0px;
+	width: 300px;
+	height: 150px;
+	
+	word-wrap: break-word;
+}

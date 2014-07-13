@@ -132,6 +132,16 @@ io.on('connection', function (socket) {
 			
 			io.emit('update-player', { id: player.name, x: data.x, y: data.y }); 
 		});
+		socket.on('chat', function (data) {
+			if(!player.loggedIn) {
+				// Just ignore chat message
+				return;
+			}
+			
+			data.sender = player.name;
+			console.log("chat", data);
+			socket.broadcast.emit('chat', data);
+		});
 		socket.on('disconnect', function (data) {
 			console.log("disconnect.");
 			console.log(data);

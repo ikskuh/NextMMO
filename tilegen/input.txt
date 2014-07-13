@@ -1,5 +1,0 @@
-dirt_grass.png;dirt1.bmp;grass3.bmp;
-dirt_gravel.png;dirt1.bmp;gravel2.bmp;
-rock_grass.png;rock1.bmp;grass3.bmp;
-rock_pave.png;rock1.bmp;pave1.bmp;
-dirt_pave.png;dirt1.bmp;pave1.bmp;
