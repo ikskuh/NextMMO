@@ -25,7 +25,7 @@ function prepareLevel(level) {
 	
 	function setWater(x, y) {
 		level.at(x,y).height = -15;
-		level.at(x,y).topTexture = "water-sea1.png";
+		level.at(x,y).topTexture = "water/water*20.png";
 		level.at(x,y).groundTexture = "";
 		level.at(x,y).alpha = 0.6;
 		level.at(x,y).isWalkable = false;

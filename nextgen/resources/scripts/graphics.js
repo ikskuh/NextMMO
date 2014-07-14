@@ -14,11 +14,8 @@ function initializePIXI(initialized) {
 	game.graphics.levelStage = new PIXI.DisplayObjectContainer();
 	game.graphics.stage.addChild(game.graphics.levelStage);
 	
-	// create an array of assets to load
-	var assetsToLoader = [ "top.png.json", "ground.png.json" ];
-	
 	// create a new loader
-	game.graphics.loader = new PIXI.AssetLoader(assetsToLoader);
+	game.graphics.loader = new PIXI.AssetLoader(game.spritesheets);
 	
 	// use callback
 	game.graphics.loader.onComplete = function onAssetsLoaded()
@@ -41,12 +38,13 @@ function loadTexture(name) {
 		texture.anchor = { }
 		texture.anchor.x = game.metadata.frames[name].anchor.x;
 		texture.anchor.y = game.metadata.frames[name].anchor.y;
-		texture.animationSpeed = game.metadata.frames[name].animationSpeed || 0.2;
+		texture.animationSpeed = game.metadata.frames[name].animationSpeed || 0.15;
 		return texture;
 	} else {
 		console.log("Fallback to non-atlas: ", name);
 		var texture = new PIXI.Texture.fromImage("textures/" + name);
 		texture.anchor = { x: 0.0, y: 0.0 }
+		texture.animationSpeed = 0.15;
 		return texture;
 	}
 }

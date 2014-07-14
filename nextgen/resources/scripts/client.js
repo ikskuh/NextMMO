@@ -5,6 +5,7 @@ function initializeGame() {
 	game.resources = { };
 	game.user = { loggedIn: false }
 	game.proxyPlayers = { }
+	game.spritesheets = [ "ground.png.json", "top.png.json", "water.png.json" ];
 	game.loadLevel = function (level) {
 		if(game.level != null) {
 			game.level.destroy();
@@ -38,7 +39,7 @@ function initializeGame() {
 
 function initializeMetaData(callback) {
 	
-	var metaData = [ "ground.png.json", "top.png.json" ];
+	var metaData = game.spritesheets;
 	var counter = 0;
 	
 	game.metadata = { }
