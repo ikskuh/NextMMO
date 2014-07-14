@@ -1,0 +1,79 @@
+{
+  "frames": {
+    "ground/dirt.png": {
+      "anchor": {
+        "x": 0.5,
+        "y": 0.0
+      },
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 194,
+        "h": 160
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 194,
+        "h": 160
+      },
+      "sourceSize": {
+        "w": 194,
+        "h": 160
+      }
+    },
+    "ground/mural.png": {
+      "anchor": {
+        "x": 0.5,
+        "y": 0.0
+      },
+      "frame": {
+        "x": 194,
+        "y": 0,
+        "w": 194,
+        "h": 160
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 194,
+        "h": 160
+      },
+      "sourceSize": {
+        "w": 194,
+        "h": 160
+      }
+    },
+    "ground/rock.png": {
+      "anchor": {
+        "x": 0.5,
+        "y": 0.0
+      },
+      "frame": {
+        "x": 388,
+        "y": 0,
+        "w": 194,
+        "h": 160
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 194,
+        "h": 160
+      },
+      "sourceSize": {
+        "w": 194,
+        "h": 160
+      }
+    }
+  },
+  "meta": {
+    "image": "ground.png"
+  }
+}

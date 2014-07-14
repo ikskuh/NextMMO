@@ -1,10 +1,8 @@
 var game = { };
 
 function initializeGame() {
-	game.socket = io('http://localhost');
 	game.listener = new window.keypress.Listener();
 	game.resources = { };
-	game.resources.emptyTileTexture = PIXI.Texture.fromImage("textures/empty.png");
 	game.user = { loggedIn: false }
 	game.proxyPlayers = { }
 	game.loadLevel = function (level) {
@@ -24,12 +22,50 @@ function initializeGame() {
 		}
 	}
 	
-	initializePIXI();
-	initializePivot();
-	intializeNetwork();
-	initializeInput();
-	initializeAudio();
-	initializeMusic();
+	initializeMetaData(function () {
+		console.log("metadata loaded" , game.metadata);
+		initializePIXI(function () {
+			// Initialize everything when PIXI is
+			// initialized and resources are loaded.
+			initializePivot();
+			intializeNetwork();
+			initializeInput();
+			initializeAudio();
+			//initializeMusic();
+		});
+	});
+}
+
+function initializeMetaData(callback) {
+	
+	var metaData = [ "ground.png.json", "top.png.json" ];
+	var counter = 0;
+	
+	game.metadata = { }
+	
+	function mergeInto(data) {
+		game.metadata = deepmerge(game.metadata, data);
+	}
+	
+	function load(url) {
+		downloadFile(url, function (data) {
+		
+			var obj = JSON.parse(data);
+			console.log(obj);
+			
+			mergeInto(obj);
+			
+			counter++;
+			if(counter < metaData.length) {
+				load(metaData[counter]);
+			} else {
+				callback();
+			}
+		});
+	}
+	
+	load(metaData[0]);
+	
 }
 
 function initializeAudio() {
@@ -168,6 +204,8 @@ function initializePivot() {
 }
 
 function intializeNetwork() {
+	game.socket = io('http://localhost');
+	
 	game.socket.on('load-level', function (level) {
 		game.loadLevel(level);
 	});
@@ -253,4 +291,24 @@ function chatLog(msg, sender) {
 	log.scrollTop = log.scrollHeight;
 	
 	game.audio.get("chatclick").play();
+}
+
+/*
+ * Taken from:
+ * http://jaskokoyn.com/2013/07/24/external-json-file/
+ */
+function downloadFile(url, callback)
+{
+    var AJAX_req = new XMLHttpRequest();
+    AJAX_req.open( "GET", url, true );
+    AJAX_req.setRequestHeader("Content-type", "application/json");
+
+    AJAX_req.onreadystatechange = function()
+    {
+        if( AJAX_req.readyState == 4 && AJAX_req.status == 200 )
+        {
+            callback(AJAX_req.responseText);
+        }
+    }
+    AJAX_req.send();
 }

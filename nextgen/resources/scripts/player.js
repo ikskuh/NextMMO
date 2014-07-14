@@ -4,9 +4,9 @@ var createBasePlayer = function () {
 	var spriteSheet = loadCharacterSpriteSheet("default");
 
 	var player = {}
-	player.sprite = new PIXI.MovieClip(spriteSheet["walk"]["s"]);
-	player.sprite.animationSpeed = 0.8;
-	player.sprite.play();
+	player.sprite = new PIXI.Sprite.fromImage("images/frame1.png"); // MovieClip(spriteSheet["walk"]["s"]);
+	//player.sprite.animationSpeed = 0.8;
+	//player.sprite.play();
 	player.sprite.anchor.x = 0.5;
 	player.sprite.anchor.y = 0.7;
 	game.graphics.stage.addChild(player.sprite);
@@ -32,7 +32,7 @@ var createBasePlayer = function () {
 	
 		if(player.target == null)
 		{
-			player.sprite.textures = spriteSheet["idle"][player.lastDirection];
+			//player.sprite.textures = spriteSheet["idle"][player.lastDirection];
 			return 0.0;
 		}
 		var deltaX = player.target.x - player.x;
@@ -88,13 +88,13 @@ var createBasePlayer = function () {
 					player.lastDirection = "ne";
 				}
 			}
-			player.sprite.textures = spriteSheet["walk"][player.lastDirection];
+			//player.sprite.textures = spriteSheet["walk"][player.lastDirection];
 			
 			return len;
 		}
 		else
 		{
-			player.sprite.textures = spriteSheet["idle"][player.lastDirection];
+			//player.sprite.textures = spriteSheet["idle"][player.lastDirection];
 			return 0.0;
 		}
 	}
